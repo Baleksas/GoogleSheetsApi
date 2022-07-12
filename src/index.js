@@ -3,7 +3,7 @@ const readline = require("readline");
 const { google } = require("googleapis");
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
+const SCOPES = ["https://www.googleapis.com/auth/spreadsheets/drive"];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -14,10 +14,10 @@ fs.readFile("client-secret.json", (err, content) => {
   if (err) return console.log("Error loading client secret file:", err);
   // Authorize a client with credentials, then call the Google Sheets API.\
 
-  authorize(JSON.parse(content), getValues);
-  authorize(JSON.parse(content), getValuesMultipleRanges);
-  authorize(JSON.parse(content), writeValues);
-  // authorize(JSON.parse(content), create);
+  // authorize(JSON.parse(content), getValues);
+  // authorize(JSON.parse(content), getValuesMultipleRanges);
+  // authorize(JSON.parse(content), writeValues);
+  authorize(JSON.parse(content), create);
 });
 
 /**
@@ -107,29 +107,28 @@ const paramsCreate = {
   title: `SpreadSheet${Math.random(0, 100)}`,
 };
 
-// /**
-//  * Create a google spreadsheet
-//  * @param {string} title Spreadsheets title
-//  * @return {string} Created spreadsheets ID
-//  */
-// async function create(auth) {
-//   const sheets = google.sheets({ version: "v4", auth });
-//   const resource = {
-//     properties: {
-//       title: paramsCreate.title,
-//     },
-//   };
-//   sheets.spreadsheets.create(
-//     {
-//       resource,
-//       fields: "spreadsheetIdSample",
-//     },
-//     (err, res) => {
-//       console.log(res);
-//       if (err) console.log("Error: ", err);
-//     }
-//   );
-// }
+/**
+ * Create a google spreadsheet
+ * @param {string} title Spreadsheets title
+ * @return {string} Created spreadsheets ID
+ */
+async function create(auth) {
+  const sheets = google.sheets({ version: "v4", auth });
+  const request = {
+    resource: {
+      properties: {
+        title: "TestingSheettttt",
+      },
+    },
+  };
+
+  sheets.spreadsheets.create(request, (err, res) => {
+    console.log(res);
+    if (err) {
+      console.log("Error: ", err);
+    }
+  });
+}
 
 /**
  * Prints the names and majors of students in a sample spreadsheet:
