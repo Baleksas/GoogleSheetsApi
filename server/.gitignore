@@ -2,5 +2,3 @@ node_modules
 client-secret.json
 token.json
 credentials.json
-KEY_FILE.json
-credentials.json
