@@ -10,40 +10,24 @@ const SCOPES = ["https://www.googleapis.com/auth/drive"];
 const TOKEN_PATH = "token.json";
 
 // Load client secrets from a local file.
-fs.readFile("client-secret.json", (err, content) => {
-  if (err) return console.log("Error loading client secret file:", err);
-  // Authorize a client with credentials, then call the Google Sheets API.\
-
-  authorize(JSON.parse(content), functionsChain);
-
-  // authorize(JSON.parse(content), getValues);
-  // authorize(JSON.parse(content), getValuesMultipleRanges);
-  // authorize(JSON.parse(content), writeValues);
-  // authorize(JSON.parse(content), createSheet);
-  // authorize(JSON.parse(content), copySheet);
-});
-
-/**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- * @param {Object} credentials The authorization client credentials.
- * @param {function} callback The callback to call with the authorized client.
- */
-function authorize(credentials, callback) {
-  const { client_secret, client_id, redirect_uris } = credentials.installed;
-  const oAuth2Client = new google.auth.OAuth2(
-    client_id,
-    client_secret,
-    redirect_uris[0]
-  );
-
-  // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) return getNewToken(oAuth2Client, callback);
-    oAuth2Client.setCredentials(JSON.parse(token));
-    callback(oAuth2Client);
-  });
+const credentials = fs.readFileSync("client-secret.json");
+if (!credentials) return console.log("Error loading client secret file");
+// Authorize a client with credentials, then call the Google Sheets API.\
+const { client_secret, client_id, redirect_uris } =
+  JSON.parse(credentials).installed;
+const oAuth2Client = new google.auth.OAuth2(
+  client_id,
+  client_secret,
+  redirect_uris[0]
+);
+const tkn = fs.readFileSync(TOKEN_PATH);
+// Check if we have previously stored a token.
+if (!tkn) {
+  return getNewToken(oAuth2Client, createSheet);
 }
+oAuth2Client.setCredentials(JSON.parse(tkn));
+
+createSheet(oAuth2Client);
 
 /**
  * Get and store new token after prompting for user authorization, and then
