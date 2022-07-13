@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   FormControl,
@@ -12,6 +12,16 @@ import { Button } from "@mui/material";
 import useStyles from "./style/materialOverwrite";
 
 const App = () => {
+  const [args, setArgs] = useState({
+    title: "",
+    defaultSSId: "",
+    defaultSId: "",
+    sheet_name: "",
+  });
+
+  useEffect(() => {
+    console.log(args);
+  }, [args]);
   const classes = useStyles();
 
   return (
@@ -31,6 +41,12 @@ const App = () => {
         <FormControl className={classes.root}>
           <InputLabel htmlFor="Title">Title</InputLabel>
           <Input
+            onChange={(e) =>
+              setArgs({
+                ...args,
+                title: e.target.value,
+              })
+            }
             className={classes.root}
             id="Title"
             aria-describedby="title-helper"
