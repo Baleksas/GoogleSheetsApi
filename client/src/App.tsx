@@ -6,17 +6,18 @@ import {
   Input,
   InputLabel,
 } from "@mui/material";
-import { shadows } from "@mui/system";
+import { Container, shadows } from "@mui/system";
 
 import { Button } from "@mui/material";
 import useStyles from "./style/materialOverwrite";
 
 const App = () => {
+  const defaultSheetName: string = "";
   const [args, setArgs] = useState({
     title: "",
-    defaultSSId: "",
-    defaultSId: "",
-    sheet_name: "",
+    defaultSSId: "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw",
+    defaultSId: 1805430215,
+    sheet_name: defaultSheetName,
   });
 
   useEffect(() => {
@@ -26,36 +27,84 @@ const App = () => {
 
   return (
     <div className="App">
-      <Box
+      <Container
         sx={{
-          width: "50%",
-          height: "60vh",
+          height: "lg",
+          maxHeight: "lg",
           backgroundColor: "#232F34",
-          margin: "auto",
           padding: "2em",
-          borderRadius: "2em",
-          color: "#FFFFFF",
+          borderRadius: "1em",
           boxShadow: 2,
+          display: "flex",
+          flexDirection: "column",
+          width: "max-content",
+          minWidth: "md",
+          maxWidth: "lg",
         }}
       >
-        <FormControl className={classes.root}>
-          <InputLabel htmlFor="Title">Title</InputLabel>
-          <Input
-            onChange={(e) =>
-              setArgs({
-                ...args,
-                title: e.target.value,
-              })
-            }
-            className={classes.root}
-            id="Title"
-            aria-describedby="title-helper"
-          />
-          <FormHelperText id="title-helper">
-            Title of the new spreadsheet
-          </FormHelperText>
-        </FormControl>
-      </Box>
+        <Box
+          className={classes.root}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "stretch",
+            width: "max-content",
+            minWidth: "md",
+            height: "100%",
+            maxHeight: "lg",
+            marginX: "auto",
+          }}
+        >
+          <FormControl>
+            <InputLabel htmlFor="Title">Title</InputLabel>
+            <Input
+              onChange={(e) =>
+                setArgs({
+                  ...args,
+                  title: e.target.value,
+                })
+              }
+              id="Title"
+              aria-describedby="title-helper"
+            />
+            <FormHelperText id="title-helper">
+              Title of the new spreadsheet
+            </FormHelperText>
+          </FormControl>
+          <FormControl>
+            <InputLabel htmlFor="Name">{`${
+              args.title ? args.title + "'s sheet" : "Sheet"
+            } name`}</InputLabel>
+            <Input
+              onChange={(e) =>
+                setArgs({
+                  ...args,
+                  sheet_name: e.target.value,
+                })
+              }
+              id="Name"
+              aria-describedby="name-helper"
+            />
+            <FormHelperText id="title-helper">
+              Name of the new spreadsheet's sheet
+            </FormHelperText>
+          </FormControl>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              // FIXME: should choose the bigger value from 1em and auto, in css its max("auto", "1em")
+              marginTop: "1em",
+              // marginTop: "auto",
+            }}
+          >
+            <Button color="success" variant="outlined">
+              Create
+            </Button>
+          </Box>
+        </Box>
+      </Container>
     </div>
   );
 };
