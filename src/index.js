@@ -195,19 +195,90 @@ function writeValues(auth) {
 // QUESTIONS
 // How to make functions with arguments. Need to find a way around auth by implementing it inside every function?
 // If above question is solved, UI could be made in order to dynamically write values and make requests by buttons
+// What is sheet id? Should it start from 0 ant iterate up or be generated automatically?
 
 async function functionsChain(auth) {
   const sheets = google.sheets({ version: "v4", auth });
   // Create
-  const request = {
+  const requestForCreate = {
     resource: {
       properties: {
-        title: "TestingSheettttt",
+        title: `TSS_${parseInt(Math.random(0, 1) * 100)}`,
       },
     },
   };
   try {
-    const createRes = await sheets.spreadsheets.create(request);
+    // FIXME: When creating a new file, it neeeds to have a sheet. Therefore, Sheet1 is automatically generated. After copying
+    // copy sheet into it, it generates another sheet. After that, need to delete the Sheet1 sheet.
+    const createRes = await sheets.spreadsheets.create(requestForCreate);
+
+    // console.log("Create res: ", createRes);
+    // createRes.data // sheets array, spreadsheet url provided by json object createRes
+    console.log(
+      "Created sheet response spreadsheet id: ",
+      createRes.data.spreadsheetId
+    ); // returns string of spreadsheet id
+    // createRes.data.properties; // Title, default format, spreadsheet theme
+    console.log("Created sheet title: ", createRes.data.properties.title); // Title, default format, spreadsheet theme
+    let createdTitle = createRes.data.properties.title;
+    // Copy
+    const requestForCopy = {
+      spreadsheetId: "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw",
+      sheetId: 1805430215,
+      resource: {
+        destinationSpreadsheetId: `${createRes.data.spreadsheetId}`,
+      },
+    };
+    const copyRes = await sheets.spreadsheets.sheets.copyTo(requestForCopy);
+
+    // console.log("copy res: ", copyRes);
+    // copyRes.data // sheets array, spreadsheet url provided by json object copyRes
+    console.log(
+      "copied sheet response destinationSpreadsheetId : ",
+      copyRes.config.data.destinationSpreadsheetId
+    ); // returns string of spreadsheet id
+    // copyRes.data.properties; // Title, default format, spreadsheet theme
+    console.log("Copied sheet id", copyRes.data.sheetId);
+    // TODO: Change copied title as it includes "Copy of ...". Change by removing "Copy of" to have original title
+    console.log("Copied sheet title", copyRes.data.title); // Title, default format, spreadsheet theme
+    // Write dates
+
+    // Function to get nearest weeks day date
+    const getWeekDay = (day) => {
+      var d = new Date();
+      d.setDate(d.getDate() + ((1 + 7 - d.getDay()) % 7 || 7));
+      // day - 1 because passing days while days in dates are from 0
+      d.setDate(d.getDate() + day - 1);
+      return d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
+    };
+
+    let valuesOfDates = [
+      [getWeekDay(1)],
+      [getWeekDay(2)],
+      [getWeekDay(3)],
+      [getWeekDay(4)],
+      [getWeekDay(5)],
+      [getWeekDay(6)],
+      [getWeekDay(7)],
+    ];
+    const resourceForWrite = {
+      values: valuesOfDates,
+    };
+
+    const paramsForWrite = {
+      spreadsheetId: `${createRes.data.spreadsheetId}`,
+      range: `Copy of Time sheet_test!C10:C17`,
+      valueInputOption: "RAW",
+      resource: resourceForWrite,
+    };
+
+    const writeRes = await sheets.spreadsheets.values.update(paramsForWrite);
+
+    console.log(
+      "write sheet response spreadsheet id: ",
+      writeRes.data.spreadsheetId
+    ); // returns string of spreadsheet id
+    console.log("write response spreadsheetid", writeRes.data.spreadsheetId);
   } catch (error) {
     console.log(error);
   }
