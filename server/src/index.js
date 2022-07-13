@@ -1,7 +1,7 @@
 const fs = require("fs");
 const readline = require("readline");
 const { google } = require("googleapis");
-const { getWeekDay } = require("../src/utils/dateGetter");
+const { getWeekDay } = require("./utils/dateGetter");
 console.log(getWeekDay);
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/drive"];
