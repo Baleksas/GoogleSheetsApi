@@ -35,10 +35,6 @@ In order to call the functions chain which includes functions:
 1. Create a new sheet with custom title
 2. Copies the default sheet with its theme settings and default cell values. Default spreadsheet is specified by spreadsheet id and sheet id. The function copies into a sheet created in a first step by getting response and it's parameter created spreadsheet id, it is passed as a resource (argument) "destinationSpreadsheetId" to the copy function. Copied sheet title will have a same name as default sheet just with "Copy of" prior name.
 
-FIXME: This needs a function which changes the sheet title.
-
-FIXME: Created spreadsheet creates Sheet1 which needs to be removed. Alternatively, we can rename sheet name on the default spreadsheet from Timetable to Sheet1 and later rename it after a copy is made.
-
 3. Write custom values into specific ranges of the sheet.
 
 TODO: need to consider which cells need to be changed automatically (such as dates), manually (names?), and which cells need to remain the same in all the sheets.
