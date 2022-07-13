@@ -27,8 +27,6 @@ if (!tkn) {
 }
 oAuth2Client.setCredentials(JSON.parse(tkn));
 
-createSheet(oAuth2Client);
-
 /**
  * Get and store new token after prompting for user authorization, and then
  * execute the given callback with the authorized OAuth2 client.
@@ -113,12 +111,12 @@ function copySheet(auth) {
   });
 }
 
-function createSheet(auth) {
-  const sheets = google.sheets({ version: "v4", auth });
+function createSheet(title) {
+  const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
   const request = {
     resource: {
       properties: {
-        title: "TestingSheettttt",
+        title: title,
       },
     },
   };
