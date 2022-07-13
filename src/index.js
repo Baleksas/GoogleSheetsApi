@@ -1,7 +1,8 @@
 const fs = require("fs");
 const readline = require("readline");
 const { google } = require("googleapis");
-
+const { getWeekDay } = require("../src/utils/dateGetter");
+console.log(getWeekDay);
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/drive"];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -11,7 +12,7 @@ const TOKEN_PATH = "token.json";
 
 // Load client secrets from a local file.
 const credentials = fs.readFileSync("client-secret.json");
-if (!credentials) return console.log("Error loading client secret file");
+if (!credentials) console.log("Error loading client secret file");
 // Authorize a client with credentials, then call the Google Sheets API.\
 const { client_secret, client_id, redirect_uris } =
   JSON.parse(credentials).installed;
@@ -23,7 +24,7 @@ const oAuth2Client = new google.auth.OAuth2(
 const tkn = fs.readFileSync(TOKEN_PATH);
 // Check if we have previously stored a token.
 if (!tkn) {
-  return getNewToken(oAuth2Client, createSheet);
+  getNewToken(oAuth2Client, createSheet);
 }
 oAuth2Client.setCredentials(JSON.parse(tkn));
 
@@ -93,8 +94,8 @@ const paramsCreate = {
 };
 
 // Makes a copy of a specified sheet. Important: destination sheet id must exist before copying into it.
-function copySheet(auth) {
-  const sheets = google.sheets({ version: "v4", auth });
+function copySheet() {
+  const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
   const request = {
     spreadsheetId: "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw",
     sheetId: 1805430215,
@@ -129,8 +130,8 @@ function createSheet(title) {
   });
 }
 
-function getValues(auth) {
-  const sheets = google.sheets({ version: "v4", auth });
+function getValues() {
+  const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
   sheets.spreadsheets.values.get(params, (err, res) => {
     if (err) return console.log("The API returned an error: " + err);
 
@@ -148,8 +149,8 @@ function getValues(auth) {
   });
 }
 
-function getValuesMultipleRanges(auth) {
-  const sheets = google.sheets({ version: "v4", auth });
+function getValuesMultipleRanges() {
+  const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
   sheets.spreadsheets.values.batchGet(paramsRanges, (err, res) => {
     // console.log(`${res.data.valueRanges.length} ranges retrieved.`);
     res.data.valueRanges.map((range) => {
@@ -158,8 +159,8 @@ function getValuesMultipleRanges(auth) {
   });
 }
 
-function writeValues(auth) {
-  const sheets = google.sheets({ version: "v4", auth });
+function writeValues() {
+  const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
   sheets.spreadsheets.values.update(paramsWrite, (err, res) => {
     if (err) console.log("ERROR: ", err);
     console.log(paramsWrite);
@@ -175,17 +176,32 @@ function writeValues(auth) {
 // Write into the copy spreadsheet 2d arrays with dynamically written arguments to change specific cells
 
 // QUESTIONS
-// How to make functions with arguments. Need to find a way around auth by implementing it inside every function?
-// If above question is solved, UI could be made in order to dynamically write values and make requests by buttons
 // What is sheet id? Should it start from 0 ant iterate up or be generated automatically?
 
-async function functionsChain(auth) {
-  const sheets = google.sheets({ version: "v4", auth });
+let defaultSpreadsheetid = "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw";
+let defaultSheetid = 1805430215;
+let defaultSheetName = "Copy of Time sheet_test";
+functionsChain(
+  "NewestSheet_1",
+  defaultSpreadsheetid,
+  defaultSheetid,
+  defaultSheetName
+);
+/**
+ * Execute chain of functions to create, copy and write into a sheet to perform required task:
+ * Get a copy of default Spreadsheet and insert values into it
+ * @param {string} title Title to create a new spreadsheet with.
+ * @param {string} defaultSSId Default Spreadsheet Id.
+ * @param {number} defaultSId Default Sheet id.
+ *
+ */
+async function functionsChain(title, defaultSSId, defaultSId, sheet_name) {
+  const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
   // Create
   const requestForCreate = {
     resource: {
       properties: {
-        title: `TSS_${parseInt(Math.random(0, 1) * 100)}`,
+        title: title,
       },
     },
   };
@@ -203,10 +219,11 @@ async function functionsChain(auth) {
     // createRes.data.properties; // Title, default format, spreadsheet theme
     console.log("Created sheet title: ", createRes.data.properties.title); // Title, default format, spreadsheet theme
     let createdTitle = createRes.data.properties.title;
+    console.log("created title: ", createdTitle);
     // Copy
     const requestForCopy = {
-      spreadsheetId: "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw",
-      sheetId: 1805430215,
+      spreadsheetId: defaultSSId,
+      sheetId: defaultSId,
       resource: {
         destinationSpreadsheetId: `${createRes.data.spreadsheetId}`,
       },
@@ -225,15 +242,6 @@ async function functionsChain(auth) {
     console.log("Copied sheet title", copyRes.data.title); // Title, default format, spreadsheet theme
     // Write dates
 
-    // Function to get nearest weeks day date
-    const getWeekDay = (day) => {
-      var d = new Date();
-      d.setDate(d.getDate() + ((1 + 7 - d.getDay()) % 7 || 7));
-      // day - 1 because passing days while days in dates are from 0
-      d.setDate(d.getDate() + day - 1);
-      return d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
-    };
-
     let valuesOfDates = [
       [getWeekDay(1)],
       [getWeekDay(2)],
@@ -243,13 +251,14 @@ async function functionsChain(auth) {
       [getWeekDay(6)],
       [getWeekDay(7)],
     ];
+
     const resourceForWrite = {
       values: valuesOfDates,
     };
 
     const paramsForWrite = {
       spreadsheetId: `${createRes.data.spreadsheetId}`,
-      range: `Copy of Time sheet_test!C10:C17`,
+      range: `${sheet_name}!C10:C17`,
       valueInputOption: "RAW",
       resource: resourceForWrite,
     };
