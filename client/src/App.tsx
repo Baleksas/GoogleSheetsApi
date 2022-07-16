@@ -5,6 +5,7 @@ import {
   FormHelperText,
   Input,
   InputLabel,
+  Typography,
 } from "@mui/material";
 import { Container, shadows } from "@mui/system";
 
@@ -35,10 +36,8 @@ const App = () => {
       },
       body: JSON.stringify(args),
     })
-      .then((res) => res.json())
-      .then((res) => console.log(res));
-
-    // .then((res) => setResponseOfChain(res));
+      // .then((res) => res.json())
+      .then((res) => setResponseOfChain(res));
   };
   return (
     <div className="App">
@@ -123,6 +122,20 @@ const App = () => {
             </Button>
           </Box>
         </Box>
+        {responseOfChain.status === 200 && (
+          <Typography
+            sx={{
+              margin: "auto",
+              marginTop: "2em",
+              backgroundColor: "rgba(46, 125, 50, 0.5)",
+              paddingX: "1em",
+            }}
+            variant={"overline"}
+            color="white"
+          >
+            Created successfully!
+          </Typography>
+        )}
       </Container>
     </div>
   );
