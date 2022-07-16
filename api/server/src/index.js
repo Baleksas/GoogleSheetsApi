@@ -71,15 +71,15 @@ function getNewToken(oAuth2Client, callback) {
 // QUESTIONS
 // What is sheet id? Should it start from 0 ant iterate up or be generated automatically?
 
-let defaultSpreadsheetid = "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw";
-let defaultSheetid = 1805430215;
+let defaultSSId = "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw";
+let defaultSId = 1805430215;
 let defaultSheetName = "Copy of Time sheet_test";
-functionsChain(
-  "NewestSheet_1",
-  defaultSpreadsheetid,
-  defaultSheetid,
-  defaultSheetName
-);
+// functionsChain({
+//   title: "NewestSheet_1",
+//   defaultSSId,
+//   defaultSId,
+//   defaultSheetName,
+// });
 /**
  * Execute chain of functions to create, copy and write into a sheet to perform required task:
  * Get a copy of default Spreadsheet and insert values into it
@@ -89,22 +89,23 @@ functionsChain(
  *
  */
 // inserted curly brackets before and after arguments to pass an object, haven't tested. hopefully works.
-async function functionsChain(title, defaultSSId, defaultSId, sheet_name) {
+async function functionsChain(args) {
   const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
   // Create
   const requestForCreate = {
     resource: {
       properties: {
-        title: title,
+        title: args.title,
       },
     },
   };
+  let status = [["First", 1]];
   try {
     // FIXME: When creating a new file, it neeeds to have a sheet. Therefore, Sheet1 is automatically generated. After copying
     // copy sheet into it, it generates another sheet. After that, need to delete the Sheet1 sheet.
     const createRes = await sheets.spreadsheets.create(requestForCreate);
-
-    // console.log("Create res: ", createRes);
+    status.push(["Create status ", createRes.status]);
+    status.push(["Create url: ", createRes.config.data.spreadsheetUrl]);
     // createRes.data // sheets array, spreadsheet url provided by json object createRes
     console.log(
       "Created sheet response spreadsheet id: ",
@@ -116,13 +117,14 @@ async function functionsChain(title, defaultSSId, defaultSId, sheet_name) {
     console.log("created title: ", createdTitle);
     // Copy
     const requestForCopy = {
-      spreadsheetId: defaultSSId,
-      sheetId: defaultSId,
+      spreadsheetId: args.defaultSSId,
+      sheetId: args.defaultSId,
       resource: {
         destinationSpreadsheetId: `${createRes.data.spreadsheetId}`,
       },
     };
     const copyRes = await sheets.spreadsheets.sheets.copyTo(requestForCopy);
+    status.push(["Copy status ", copyRes.status]);
 
     // console.log("copy res: ", copyRes);
     // copyRes.data // sheets array, spreadsheet url provided by json object copyRes
@@ -152,12 +154,14 @@ async function functionsChain(title, defaultSSId, defaultSId, sheet_name) {
 
     const paramsForWrite = {
       spreadsheetId: `${createRes.data.spreadsheetId}`,
-      range: `${sheet_name}!C10:C17`,
+      //TODO: make Copy of Time sheet_test dynamic according to given sheet title and renaming it somehow
+      range: `Copy of Time sheet_test!C10:C17`,
       valueInputOption: "RAW",
       resource: resourceForWrite,
     };
 
     const writeRes = await sheets.spreadsheets.values.update(paramsForWrite);
+    status.push(["Write status ", writeRes.status]);
 
     console.log(
       "write sheet response spreadsheet id: ",
@@ -167,6 +171,9 @@ async function functionsChain(title, defaultSSId, defaultSId, sheet_name) {
   } catch (error) {
     console.log(error);
   }
+
+  return status;
+  // return [createRes.status, copyRes.status, writeRes.status];
 }
 
-module.exports = { oAuth2Client };
+module.exports = { oAuth2Client, functionsChain };

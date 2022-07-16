@@ -19,19 +19,27 @@ const App = () => {
     defaultSId: 1805430215,
     sheet_name: defaultSheetName,
   });
-  const [responseOfChain, setResponseOfChain] = useState({});
+  const [responseOfChain, setResponseOfChain]: any = useState([]);
 
-  useEffect(() => {
-    console.log(args);
-  }, [args]);
   const classes = useStyles();
 
+  useEffect(() => {
+    console.log("Response of chain changed: ", responseOfChain);
+  }, [responseOfChain]);
+
   const callApi = () => {
-    fetch("http://localhost:9000/testapi")
-      .then((res) => res.text())
-      .then((res) => setResponseOfChain(res));
+    fetch("http://localhost:9000/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(args),
+    })
+      .then((res) => res.json())
+      .then((res) => console.log(res));
+
+    // .then((res) => setResponseOfChain(res));
   };
-  console.log("response of chain:", responseOfChain);
   return (
     <div className="App">
       <Container
@@ -106,7 +114,11 @@ const App = () => {
               // marginTop: "auto",
             }}
           >
-            <Button onClick={callApi} color="success" variant="outlined">
+            <Button
+              onClick={() => callApi()}
+              color="success"
+              variant="outlined"
+            >
               Create
             </Button>
           </Box>
