@@ -19,12 +19,19 @@ const App = () => {
     defaultSId: 1805430215,
     sheet_name: defaultSheetName,
   });
+  const [responseOfChain, setResponseOfChain] = useState({});
 
   useEffect(() => {
     console.log(args);
   }, [args]);
   const classes = useStyles();
 
+  const callApi = () => {
+    fetch("http://localhost:9000/testapi")
+      .then((res) => res.text())
+      .then((res) => setResponseOfChain(res));
+  };
+  console.log("response of chain:", responseOfChain);
   return (
     <div className="App">
       <Container
@@ -99,7 +106,7 @@ const App = () => {
               // marginTop: "auto",
             }}
           >
-            <Button color="success" variant="outlined">
+            <Button onClick={callApi} color="success" variant="outlined">
               Create
             </Button>
           </Box>
