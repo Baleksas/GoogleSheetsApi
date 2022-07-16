@@ -16,12 +16,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 const App = () => {
   const defaultSheetName: string = "";
-  const [args, setArgs] = useState({
+  const initialArgs = {
     title: "",
     defaultSSId: "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw",
     defaultSId: 1805430215,
     sheet_name: defaultSheetName,
-  });
+  };
+  const [args, setArgs] = useState(initialArgs);
 
   const [responseOfChain, setResponseOfChain] = useState<(string | number)[]>();
   const [errors, setErrors] = useState(false);
@@ -45,7 +46,7 @@ const App = () => {
         if (res[res.length - 1] !== 200) setErrors(true);
         setResponseOfChain(res);
       });
-
+    setArgs(initialArgs);
     setIsLoading(false);
   };
   return (
@@ -82,6 +83,7 @@ const App = () => {
           <FormControl>
             <InputLabel htmlFor="Title">Title</InputLabel>
             <Input
+              value={args.title}
               onChange={(e) =>
                 setArgs({
                   ...args,
