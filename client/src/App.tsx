@@ -5,33 +5,50 @@ import {
   FormHelperText,
   Input,
   InputLabel,
+  Link,
+  Typography,
 } from "@mui/material";
 import { Container, shadows } from "@mui/system";
 
 import { Button } from "@mui/material";
 import useStyles from "./style/materialOverwrite";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const App = () => {
   const defaultSheetName: string = "";
-  const [args, setArgs] = useState({
+  const initialArgs = {
     title: "",
     defaultSSId: "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw",
     defaultSId: 1805430215,
     sheet_name: defaultSheetName,
-  });
-  const [responseOfChain, setResponseOfChain] = useState({});
+  };
+  const [args, setArgs] = useState(initialArgs);
 
-  useEffect(() => {
-    console.log(args);
-  }, [args]);
+  const [responseOfChain, setResponseOfChain] = useState<(string | number)[]>();
+  const [errors, setErrors] = useState(false);
+
+  const [isLoading, setIsLoading] = useState<boolean>();
   const classes = useStyles();
 
-  const callApi = () => {
-    fetch("http://localhost:9000/testapi")
-      .then((res) => res.text())
-      .then((res) => setResponseOfChain(res));
+  //FIXME: more efficient way for error checking
+
+  const callApi = async () => {
+    setIsLoading(true);
+    await fetch("http://localhost:9000/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(args),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res[res.length - 1] !== 200) setErrors(true);
+        setResponseOfChain(res);
+      });
+    setArgs(initialArgs);
+    setIsLoading(false);
   };
-  console.log("response of chain:", responseOfChain);
   return (
     <div className="App">
       <Container
@@ -66,6 +83,7 @@ const App = () => {
           <FormControl>
             <InputLabel htmlFor="Title">Title</InputLabel>
             <Input
+              value={args.title}
               onChange={(e) =>
                 setArgs({
                   ...args,
@@ -84,6 +102,7 @@ const App = () => {
               args.title ? args.title + "'s sheet" : "Sheet"
             } name`}</InputLabel>
             <Input
+              error
               onChange={(e) =>
                 setArgs({
                   ...args,
@@ -94,7 +113,8 @@ const App = () => {
               aria-describedby="name-helper"
             />
             <FormHelperText id="title-helper">
-              Name of the new spreadsheet's sheet
+              {/* Name of the new spreadsheet's sheet */}
+              This feature is not supported at the moment
             </FormHelperText>
           </FormControl>
           <Box
@@ -106,11 +126,58 @@ const App = () => {
               // marginTop: "auto",
             }}
           >
-            <Button onClick={callApi} color="success" variant="outlined">
+            <Button
+              onClick={() => callApi()}
+              color="success"
+              variant="outlined"
+            >
               Create
             </Button>
           </Box>
         </Box>
+        {isLoading && (
+          <Box
+            sx={{
+              margin: "auto",
+              marginTop: "1em",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
+        {!isLoading && responseOfChain && (
+          <Box
+            sx={{
+              margin: "auto",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "2em",
+              backgroundColor: `${
+                errors ? "#B22727" : "rgba(46, 125, 50, 0.5)"
+              }`,
+              paddingX: "1em",
+            }}
+          >
+            <Typography variant={"overline"} color="white">
+              {!errors
+                ? "Created successfully "
+                : responseOfChain[responseOfChain.length - 1]}
+            </Typography>
+            <Typography variant={"overline"} color="white">
+              <Link
+                sx={{
+                  color: "rgb(37, 150, 190)",
+                }}
+                target="_blank"
+                variant="body2"
+                href={responseOfChain[0] ? responseOfChain[0].toString() : "#"}
+              >
+                Sheet URL
+              </Link>
+            </Typography>
+          </Box>
+        )}
       </Container>
     </div>
   );

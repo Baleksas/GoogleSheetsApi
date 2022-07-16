@@ -1,3 +1,5 @@
 .DS_Store
 api/node_modules/
 node_modules
+api/token.json
+api/client-secret.json
