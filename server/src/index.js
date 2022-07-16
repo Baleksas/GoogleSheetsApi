@@ -89,7 +89,7 @@ functionsChain(
  *
  */
 // inserted curly brackets before and after arguments to pass an object, haven't tested. hopefully works.
-async function functionsChain({ title, defaultSSId, defaultSId, sheet_name }) {
+async function functionsChain(title, defaultSSId, defaultSId, sheet_name) {
   const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
   // Create
   const requestForCreate = {
