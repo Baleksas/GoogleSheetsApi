@@ -80,6 +80,19 @@ let defaultSheetName = "Copy of Time sheet_test";
 //   defaultSId,
 //   defaultSheetName,
 // });
+
+// {
+//   "requests": [
+//     {
+//       "addSheet": {
+//         "properties": {
+//           "title": "Deposits",
+//         }
+//       }
+//     }
+//   ]
+// }
+
 /**
  * Execute chain of functions to create, copy and write into a sheet to perform required task:
  * Get a copy of default Spreadsheet and insert values into it
@@ -92,8 +105,17 @@ let defaultSheetName = "Copy of Time sheet_test";
 async function functionsChain(args) {
   const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
   // Create
+
   const requestForCreate = {
     resource: {
+      sheets: [
+        {
+          properties: {
+            title: args.sheet_name,
+          },
+        },
+      ],
+
       properties: {
         title: args.title,
       },
@@ -115,6 +137,8 @@ async function functionsChain(args) {
     console.log("Created sheet title: ", createRes.data.properties.title); // Title, default format, spreadsheet theme
     let createdTitle = createRes.data.properties.title;
     console.log("created title: ", createdTitle);
+    const createdSheet = createRes.data.sheets[0];
+    console.log("created sheet id:", createdSheet.properties.sheetId);
     // Copy
     const requestForCopy = {
       spreadsheetId: args.defaultSSId,
@@ -155,7 +179,7 @@ async function functionsChain(args) {
     const paramsForWrite = {
       spreadsheetId: `${createRes.data.spreadsheetId}`,
       //TODO: make Copy of Time sheet_test dynamic according to given sheet title and renaming it somehow
-      range: `Copy of Time sheet_test!C10:C17`,
+      range: `${createdSheet.properties.title}!C10:C17`,
       valueInputOption: "RAW",
       resource: resourceForWrite,
     };
@@ -166,13 +190,13 @@ async function functionsChain(args) {
     console.log(
       "write sheet response spreadsheet id: ",
       writeRes.data.spreadsheetId
-    ); // returns string of spreadsheet id
+    );
     console.log("write response spreadsheetid", writeRes.data.spreadsheetId);
   } catch (error) {
     console.log(error);
   }
 
-  return status;
+  // return status;
   // return [createRes.status, copyRes.status, writeRes.status];
 }
 
