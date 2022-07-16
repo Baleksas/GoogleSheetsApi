@@ -20,7 +20,10 @@ const App = () => {
     defaultSId: 1805430215,
     sheet_name: defaultSheetName,
   });
-  const [responseOfChain, setResponseOfChain]: any = useState([]);
+
+  const [responseOfChain, setResponseOfChain] = useState<(string | number)[]>(
+    []
+  );
 
   const classes = useStyles();
 
@@ -36,7 +39,7 @@ const App = () => {
       },
       body: JSON.stringify(args),
     })
-      // .then((res) => res.json())
+      .then((res) => res.json())
       .then((res) => setResponseOfChain(res));
   };
   return (
@@ -122,7 +125,7 @@ const App = () => {
             </Button>
           </Box>
         </Box>
-        {responseOfChain.status === 200 && (
+        {responseOfChain && (
           <Typography
             sx={{
               margin: "auto",
@@ -133,7 +136,9 @@ const App = () => {
             variant={"overline"}
             color="white"
           >
-            Created successfully!
+            {responseOfChain[responseOfChain.length - 1] === 200
+              ? "Created successfully"
+              : responseOfChain}
           </Typography>
         )}
       </Container>

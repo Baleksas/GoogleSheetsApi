@@ -121,82 +121,65 @@ async function functionsChain(args) {
       },
     },
   };
-  let status = [["First", 1]];
+  let status = [];
+  // FIXME: When creating a new file, it neeeds to have a sheet. Therefore, Sheet1 is automatically generated. After copying
+  // copy sheet into it, it generates another sheet. After that, need to delete the Sheet1 sheet.
+  const createRes = await sheets.spreadsheets.create(requestForCreate);
+  if (createRes.status !== 200) return createRes;
+  status.push(createRes.data.spreadsheetUrl);
+  status.push(createRes.status);
+
+  let createdTitle = createRes.data.properties.title;
+  const createdSheet = createRes.data.sheets[0];
+
+  // Copy
+  const requestForCopy = {
+    spreadsheetId: args.defaultSSId,
+    sheetId: args.defaultSId,
+    resource: {
+      destinationSpreadsheetId: `${createRes.data.spreadsheetId}`,
+    },
+  };
+  const copyRes = await sheets.spreadsheets.sheets.copyTo(requestForCopy);
+  if (copyRes.status !== 200) return copyRes;
+  status.push(copyRes.status);
+
+  // Write dates
+
+  let valuesOfDates = [
+    [getWeekDay(1)],
+    [getWeekDay(2)],
+    [getWeekDay(3)],
+    [getWeekDay(4)],
+    [getWeekDay(5)],
+    [getWeekDay(6)],
+    [getWeekDay(7)],
+  ];
+
+  const resourceForWrite = {
+    values: valuesOfDates,
+  };
+
+  const paramsForWrite = {
+    spreadsheetId: `${createRes.data.spreadsheetId}`,
+    //TODO: make Copy of Time sheet_test dynamic according to given sheet title and renaming it somehow
+    range: `${copyRes.data.title}!C10:C17`,
+    valueInputOption: "RAW",
+    resource: resourceForWrite,
+  };
   try {
-    // FIXME: When creating a new file, it neeeds to have a sheet. Therefore, Sheet1 is automatically generated. After copying
-    // copy sheet into it, it generates another sheet. After that, need to delete the Sheet1 sheet.
-    const createRes = await sheets.spreadsheets.create(requestForCreate);
-    status.push(["Create status ", createRes.status]);
-    status.push(["Create url: ", createRes.config.data.spreadsheetUrl]);
-    // createRes.data // sheets array, spreadsheet url provided by json object createRes
-    console.log(
-      "Created sheet response spreadsheet id: ",
-      createRes.data.spreadsheetId
-    ); // returns string of spreadsheet id
-    // createRes.data.properties; // Title, default format, spreadsheet theme
-    console.log("Created sheet title: ", createRes.data.properties.title); // Title, default format, spreadsheet theme
-    let createdTitle = createRes.data.properties.title;
-    console.log("created title: ", createdTitle);
-    const createdSheet = createRes.data.sheets[0];
-    console.log("created sheet id:", createdSheet.properties.sheetId);
-    // Copy
-    const requestForCopy = {
-      spreadsheetId: args.defaultSSId,
-      sheetId: args.defaultSId,
-      resource: {
-        destinationSpreadsheetId: `${createRes.data.spreadsheetId}`,
-      },
-    };
-    const copyRes = await sheets.spreadsheets.sheets.copyTo(requestForCopy);
-    status.push(["Copy status ", copyRes.status]);
-
-    // console.log("copy res: ", copyRes);
-    // copyRes.data // sheets array, spreadsheet url provided by json object copyRes
-    console.log(
-      "copied sheet response destinationSpreadsheetId : ",
-      copyRes.config.data.destinationSpreadsheetId
-    ); // returns string of spreadsheet id
-    // copyRes.data.properties; // Title, default format, spreadsheet theme
-    console.log("Copied sheet id", copyRes.data.sheetId);
-    // TODO: Change copied title as it includes "Copy of ...". Change by removing "Copy of" to have original title
-    console.log("Copied sheet title", copyRes.data.title); // Title, default format, spreadsheet theme
-    // Write dates
-
-    let valuesOfDates = [
-      [getWeekDay(1)],
-      [getWeekDay(2)],
-      [getWeekDay(3)],
-      [getWeekDay(4)],
-      [getWeekDay(5)],
-      [getWeekDay(6)],
-      [getWeekDay(7)],
-    ];
-
-    const resourceForWrite = {
-      values: valuesOfDates,
-    };
-
-    const paramsForWrite = {
-      spreadsheetId: `${createRes.data.spreadsheetId}`,
-      //TODO: make Copy of Time sheet_test dynamic according to given sheet title and renaming it somehow
-      range: `${createdSheet.properties.title}!C10:C17`,
-      valueInputOption: "RAW",
-      resource: resourceForWrite,
-    };
-
     const writeRes = await sheets.spreadsheets.values.update(paramsForWrite);
-    status.push(["Write status ", writeRes.status]);
-
+    status.push(writeRes.status);
     console.log(
       "write sheet response spreadsheet id: ",
       writeRes.data.spreadsheetId
     );
     console.log("write response spreadsheetid", writeRes.data.spreadsheetId);
   } catch (error) {
-    console.log(error);
+    return error;
   }
 
-  // return status;
+  return { status };
   // return [createRes.status, copyRes.status, writeRes.status];
 }
 
