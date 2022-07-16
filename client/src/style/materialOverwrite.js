@@ -34,7 +34,7 @@ export default makeStyles({
     },
 
     "& .MuiInput-underline": {
-      borderBottom: "1px solid rgba(255,255,255,0.8)",
+      borderBottom: "1px solid rgba(100,100,100,0.8)",
     },
     "& .MuiFormHelperText-root": {
       color: "rgba(255,255,255,0.8)",

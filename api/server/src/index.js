@@ -176,9 +176,8 @@ async function functionsChain(args) {
     );
     console.log("write response spreadsheetid", writeRes.data.spreadsheetId);
   } catch (error) {
-    return error;
+    status.push(404);
   }
-
   return { status };
   // return [createRes.status, copyRes.status, writeRes.status];
 }

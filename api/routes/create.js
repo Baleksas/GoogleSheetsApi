@@ -4,16 +4,15 @@ var { functionsChain } = require("../server/src/index");
 router.post("/", async (req, res, next) => {
   let funcRes = await functionsChain(req.body);
   let stat = funcRes.status;
-  console.log("stat", stat);
-  console.log("response,,,", stat.response, " after response");
-
-  if (stat[stat.length - 1] !== 200)
-    res
-      .status(stat.response.data.error.code)
-      .send(stat.response.data.error.message);
   res.setHeader("Content-Type", "application/json");
 
-  res.json(stat);
+  //TODO: Implement error messages which let user know what went wrong. (Create/copy/write)
+  let filteredStatus = stat.filter((status) => status !== 200);
+  if (filteredStatus.length > 1) {
+    res.send(filteredStatus);
+  } else {
+    res.json(stat);
+  }
 });
 
 module.exports = router;

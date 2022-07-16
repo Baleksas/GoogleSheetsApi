@@ -5,12 +5,14 @@ import {
   FormHelperText,
   Input,
   InputLabel,
+  Link,
   Typography,
 } from "@mui/material";
 import { Container, shadows } from "@mui/system";
 
 import { Button } from "@mui/material";
 import useStyles from "./style/materialOverwrite";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const App = () => {
   const defaultSheetName: string = "";
@@ -21,18 +23,17 @@ const App = () => {
     sheet_name: defaultSheetName,
   });
 
-  const [responseOfChain, setResponseOfChain] = useState<(string | number)[]>(
-    []
-  );
+  const [responseOfChain, setResponseOfChain] = useState<(string | number)[]>();
+  const [errors, setErrors] = useState(false);
 
+  const [isLoading, setIsLoading] = useState<boolean>();
   const classes = useStyles();
 
-  useEffect(() => {
-    console.log("Response of chain changed: ", responseOfChain);
-  }, [responseOfChain]);
+  //FIXME: more efficient way for error checking
 
-  const callApi = () => {
-    fetch("http://localhost:9000/create", {
+  const callApi = async () => {
+    setIsLoading(true);
+    await fetch("http://localhost:9000/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,7 +41,12 @@ const App = () => {
       body: JSON.stringify(args),
     })
       .then((res) => res.json())
-      .then((res) => setResponseOfChain(res));
+      .then((res) => {
+        if (res[res.length - 1] !== 200) setErrors(true);
+        setResponseOfChain(res);
+      });
+
+    setIsLoading(false);
   };
   return (
     <div className="App">
@@ -94,6 +100,7 @@ const App = () => {
               args.title ? args.title + "'s sheet" : "Sheet"
             } name`}</InputLabel>
             <Input
+              error
               onChange={(e) =>
                 setArgs({
                   ...args,
@@ -104,7 +111,8 @@ const App = () => {
               aria-describedby="name-helper"
             />
             <FormHelperText id="title-helper">
-              Name of the new spreadsheet's sheet
+              {/* Name of the new spreadsheet's sheet */}
+              This feature is not supported at the moment
             </FormHelperText>
           </FormControl>
           <Box
@@ -125,21 +133,48 @@ const App = () => {
             </Button>
           </Box>
         </Box>
-        {responseOfChain && (
-          <Typography
+        {isLoading && (
+          <Box
             sx={{
               margin: "auto",
+              marginTop: "1em",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
+        {!isLoading && responseOfChain && (
+          <Box
+            sx={{
+              margin: "auto",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
               marginTop: "2em",
-              backgroundColor: "rgba(46, 125, 50, 0.5)",
+              backgroundColor: `${
+                errors ? "#B22727" : "rgba(46, 125, 50, 0.5)"
+              }`,
               paddingX: "1em",
             }}
-            variant={"overline"}
-            color="white"
           >
-            {responseOfChain[responseOfChain.length - 1] === 200
-              ? "Created successfully"
-              : responseOfChain}
-          </Typography>
+            <Typography variant={"overline"} color="white">
+              {!errors
+                ? "Created successfully "
+                : responseOfChain[responseOfChain.length - 1]}
+            </Typography>
+            <Typography variant={"overline"} color="white">
+              <Link
+                sx={{
+                  color: "rgb(37, 150, 190)",
+                }}
+                target="_blank"
+                variant="body2"
+                href={responseOfChain[0] ? responseOfChain[0].toString() : "#"}
+              >
+                Sheet URL
+              </Link>
+            </Typography>
+          </Box>
         )}
       </Container>
     </div>
