@@ -81,18 +81,6 @@ let defaultSheetName = "Copy of Time sheet_test";
 //   defaultSheetName,
 // });
 
-// {
-//   "requests": [
-//     {
-//       "addSheet": {
-//         "properties": {
-//           "title": "Deposits",
-//         }
-//       }
-//     }
-//   ]
-// }
-
 /**
  * Execute chain of functions to create, copy and write into a sheet to perform required task:
  * Get a copy of default Spreadsheet and insert values into it
@@ -189,6 +177,27 @@ async function functionsChain(args) {
   });
 
   status.push(deleteRes.status);
+
+  const renameRequest = {
+    requests: [
+      {
+        updateSheetProperties: {
+          properties: {
+            sheetId: copyRes.data.sheetId,
+            title: args.sheet_name,
+          },
+          fields: "title",
+        },
+      },
+    ],
+  };
+  const renameRes = await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: createRes.data.spreadsheetId,
+    resource: renameRequest,
+  });
+  status.push(renameRes.status);
+
+  console.log(renameRes);
 
   return { status };
   // return [createRes.status, copyRes.status, writeRes.status];
