@@ -15,12 +15,12 @@ import useStyles from "./style/materialOverwrite";
 import CircularProgress from "@mui/material/CircularProgress";
 import { getWeekDay } from "./helpers/dateGetter";
 const App = () => {
-  const defaultSheetName: string = "";
   const initialArgs = {
     title: "",
     defaultSSId: "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw",
     defaultSId: 1805430215,
-    sheet_name: defaultSheetName,
+    //Default sheet name is chosen in functions chain if nothing is provided. Reason: input field has to be empty initially
+    sheet_name: "",
     startingDate: getWeekDay(1),
   };
   const [args, setArgs] = useState(initialArgs);
@@ -104,7 +104,6 @@ const App = () => {
               args.title ? args.title + "'s sheet" : "Sheet"
             } name`}</InputLabel>
             <Input
-              error
               onChange={(e) =>
                 setArgs({
                   ...args,
@@ -115,8 +114,7 @@ const App = () => {
               aria-describedby="name-helper"
             />
             <FormHelperText id="name-helper">
-              {/* Name of the new spreadsheet's sheet */}
-              This feature is not supported at the moment
+              Name of the new spreadsheet's sheet
             </FormHelperText>
           </FormControl>
           <FormControl>

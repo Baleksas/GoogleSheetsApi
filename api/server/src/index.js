@@ -184,7 +184,7 @@ async function functionsChain(args) {
         updateSheetProperties: {
           properties: {
             sheetId: copyRes.data.sheetId,
-            title: args.sheet_name,
+            title: args.sheet_name ? args.sheet_name : "Default",
           },
           fields: "title",
         },
@@ -197,10 +197,7 @@ async function functionsChain(args) {
   });
   status.push(renameRes.status);
 
-  console.log(renameRes);
-
   return { status };
-  // return [createRes.status, copyRes.status, writeRes.status];
 }
 
 module.exports = { oAuth2Client, functionsChain };
