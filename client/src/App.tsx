@@ -13,7 +13,7 @@ import { Container, shadows } from "@mui/system";
 import { Button } from "@mui/material";
 import useStyles from "./style/materialOverwrite";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import { getWeekDay } from "./helpers/dateGetter";
 const App = () => {
   const defaultSheetName: string = "";
   const initialArgs = {
@@ -21,6 +21,7 @@ const App = () => {
     defaultSSId: "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw",
     defaultSId: 1805430215,
     sheet_name: defaultSheetName,
+    startingDate: getWeekDay(1),
   };
   const [args, setArgs] = useState(initialArgs);
 
@@ -31,7 +32,7 @@ const App = () => {
   const classes = useStyles();
 
   //FIXME: more efficient way for error checking
-
+  console.log(typeof args.startingDate);
   const callApi = async () => {
     setIsLoading(true);
     await fetch("http://localhost:9000/create", {
@@ -115,6 +116,24 @@ const App = () => {
             <FormHelperText id="title-helper">
               {/* Name of the new spreadsheet's sheet */}
               This feature is not supported at the moment
+            </FormHelperText>
+          </FormControl>
+          <FormControl>
+            <InputLabel htmlFor="Date">Starting date</InputLabel>
+            <Input
+              value={args.startingDate}
+              type="date"
+              onChange={(e) => {
+                setArgs({
+                  ...args,
+                  startingDate: e.target.value,
+                });
+              }}
+              id="Date"
+              aria-describedby="date-helper"
+            />
+            <FormHelperText id="title-helper">
+              Default date is the nearest Monday
             </FormHelperText>
           </FormControl>
           <Box

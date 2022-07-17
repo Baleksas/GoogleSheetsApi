@@ -4,7 +4,7 @@ const getWeekDay = (day) => {
   d.setDate(d.getDate() + ((1 + 7 - d.getDay()) % 7 || 7));
   // day - 1 because passing days while days in dates are from 0
   d.setDate(d.getDate() + day - 1);
-  return d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
+  return d.toISOString().split("T")[0];
 };
 
 module.exports = { getWeekDay };
