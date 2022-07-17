@@ -129,9 +129,6 @@ async function functionsChain(args) {
   status.push(createRes.data.spreadsheetUrl);
   status.push(createRes.status);
 
-  let createdTitle = createRes.data.properties.title;
-  const createdSheet = createRes.data.sheets[0];
-
   // Copy
   const requestForCopy = {
     spreadsheetId: args.defaultSSId,
@@ -172,6 +169,27 @@ async function functionsChain(args) {
   } catch (error) {
     status.push(404);
   }
+
+  // First created sheet is auto generated when spreadsheet was created
+  const createdSheet = createRes.data.sheets[0];
+
+  // Delete generetaed Sheet
+  const batchUpdateRequest = {
+    requests: [
+      {
+        deleteSheet: {
+          sheetId: createdSheet.properties.sheetId,
+        },
+      },
+    ],
+  };
+  const deleteRes = await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: createRes.data.spreadsheetId,
+    resource: batchUpdateRequest,
+  });
+
+  status.push(deleteRes.status);
+
   return { status };
   // return [createRes.status, copyRes.status, writeRes.status];
 }
