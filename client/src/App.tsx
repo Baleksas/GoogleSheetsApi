@@ -32,9 +32,10 @@ const App = () => {
   const classes = useStyles();
 
   //FIXME: more efficient way for error checking
-  console.log(typeof args.startingDate);
   const callApi = async () => {
+    setErrors(false);
     setIsLoading(true);
+    console.log(args);
     await fetch("http://localhost:9000/create", {
       method: "POST",
       headers: {
@@ -113,7 +114,7 @@ const App = () => {
               id="Name"
               aria-describedby="name-helper"
             />
-            <FormHelperText id="title-helper">
+            <FormHelperText id="name-helper">
               {/* Name of the new spreadsheet's sheet */}
               This feature is not supported at the moment
             </FormHelperText>
@@ -132,7 +133,7 @@ const App = () => {
               id="Date"
               aria-describedby="date-helper"
             />
-            <FormHelperText id="title-helper">
+            <FormHelperText id="date-helper">
               Default date is the nearest Monday
             </FormHelperText>
           </FormControl>

@@ -145,16 +145,10 @@ async function functionsChain(args) {
   status.push(copyRes.status);
 
   // Write dates
+  var { getWeekData } = require("./utils/getWeekData");
+  let week = getWeekData(args.startingDate);
 
-  let valuesOfDates = [
-    [getWeekDay(1)],
-    [getWeekDay(2)],
-    [getWeekDay(3)],
-    [getWeekDay(4)],
-    [getWeekDay(5)],
-    [getWeekDay(6)],
-    [getWeekDay(7)],
-  ];
+  let valuesOfDates = week;
 
   const resourceForWrite = {
     values: valuesOfDates,
