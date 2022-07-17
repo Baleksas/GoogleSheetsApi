@@ -23,9 +23,13 @@ const App = () => {
     sheet_name: "",
     startingDate: getWeekDay(1),
   };
+  interface responseType {
+    spreadsheetUrl: string;
+    stat: number[];
+  }
   const [args, setArgs] = useState(initialArgs);
 
-  const [responseOfChain, setResponseOfChain] = useState<(string | number)[]>();
+  const [responseOfChain, setResponseOfChain] = useState<responseType>();
   const [errors, setErrors] = useState(false);
 
   const [isLoading, setIsLoading] = useState<boolean>();
@@ -35,21 +39,32 @@ const App = () => {
   const callApi = async () => {
     setErrors(false);
     setIsLoading(true);
-    console.log(args);
-    await fetch("http://localhost:9000/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(args),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res[res.length - 1] !== 200) setErrors(true);
-        setResponseOfChain(res);
-      });
-    setArgs(initialArgs);
-    setIsLoading(false);
+    try {
+      await fetch("http://localhost:9000/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(args),
+      })
+        .then((res) => {
+          console.log("res before json: ", res);
+          return res;
+        })
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res.stat.filter((code: number) => code !== 200));
+          if (res.stat.filter((code: number) => code !== 200)) {
+            setErrors(true);
+          }
+          setResponseOfChain(res);
+        });
+      setArgs(initialArgs);
+      setIsLoading(false);
+    } catch (error) {
+      setErrors(true);
+      setIsLoading(false);
+    }
   };
   return (
     <div className="App">
@@ -179,8 +194,8 @@ const App = () => {
           >
             <Typography variant={"overline"} color="white">
               {!errors
-                ? "Created successfully "
-                : responseOfChain[responseOfChain.length - 1]}
+                ? `Created successfully. Status: ${responseOfChain.stat}`
+                : `Failed. Status: ${responseOfChain.stat}`}
             </Typography>
             <Typography variant={"overline"} color="white">
               <Link
@@ -189,7 +204,11 @@ const App = () => {
                 }}
                 target="_blank"
                 variant="body2"
-                href={responseOfChain[0] ? responseOfChain[0].toString() : "#"}
+                href={
+                  responseOfChain.spreadsheetUrl
+                    ? responseOfChain.spreadsheetUrl
+                    : "#"
+                }
               >
                 Sheet URL
               </Link>

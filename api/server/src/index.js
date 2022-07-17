@@ -114,7 +114,7 @@ async function functionsChain(args) {
   // copy sheet into it, it generates another sheet. After that, need to delete the Sheet1 sheet.
   const createRes = await sheets.spreadsheets.create(requestForCreate);
   if (createRes.status !== 200) return createRes;
-  status.push(createRes.data.spreadsheetUrl);
+  const spreadsheetUrl = createRes.data.spreadsheetUrl;
   status.push(createRes.status);
 
   // Copy
@@ -149,13 +149,8 @@ async function functionsChain(args) {
   try {
     const writeRes = await sheets.spreadsheets.values.update(paramsForWrite);
     status.push(writeRes.status);
-    console.log(
-      "write sheet response spreadsheet id: ",
-      writeRes.data.spreadsheetId
-    );
-    console.log("write response spreadsheetid", writeRes.data.spreadsheetId);
   } catch (error) {
-    status.push(404);
+    status.push(error.response.status);
   }
 
   // First created sheet is auto generated when spreadsheet was created
@@ -196,8 +191,7 @@ async function functionsChain(args) {
     resource: renameRequest,
   });
   status.push(renameRes.status);
-
-  return { status };
+  return { spreadsheetUrl, status };
 }
 
 module.exports = { oAuth2Client, functionsChain };
