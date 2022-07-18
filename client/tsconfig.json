@@ -19,5 +19,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "../api/server/src/utils/getWeekData.js"]
+  "include": ["src", "../api/server/src/utils/formatDate.js"]
 }

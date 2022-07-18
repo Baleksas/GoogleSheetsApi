@@ -130,9 +130,15 @@ async function functionsChain(args) {
   status.push(copyRes.status);
 
   // Write dates
-  var { getWeekData } = require("./utils/getWeekData");
-  let week = getWeekData(args.startingDate);
-
+  // TODO: Fix dates formatting to avoid redundancy
+  var { formatDate } = require("./utils/formatDate");
+  let sdate = new Date(args.startingDate);
+  let week = [];
+  for (var i = 0; i < 7; i++) {
+    sdate.setDate(sdate.getDate() + 1);
+    week.push([formatDate(sdate.toLocaleDateString("en-US"))]);
+  }
+  console.log(week);
   let valuesOfDates = week;
 
   const resourceForWrite = {
