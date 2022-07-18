@@ -138,24 +138,35 @@ async function functionsChain(args) {
     sdate.setDate(sdate.getDate() + 1);
     week.push([formatDate(sdate.toLocaleDateString("en-US"))]);
   }
-  console.log(week);
   let valuesOfDates = week;
+  const writeData = [
+    {
+      range: `${copyRes.data.title}!C10:C17`,
+      values: valuesOfDates,
+    },
+    {
+      range: `${copyRes.data.title}!H3:H3`,
+      values: [valuesOfDates[0]],
+    },
+    {
+      range: `${copyRes.data.title}!H4:H4`,
+      values: [valuesOfDates[6]],
+    },
+  ];
 
   const resourceForWrite = {
-    values: valuesOfDates,
+    data: writeData,
+    valueInputOption: "RAW",
   };
 
-  const paramsForWrite = {
-    spreadsheetId: `${createRes.data.spreadsheetId}`,
-    //TODO: make Copy of Time sheet_test dynamic according to given sheet title and renaming it somehow
-    range: `${copyRes.data.title}!C10:C17`,
-    valueInputOption: "RAW",
-    resource: resourceForWrite,
-  };
   try {
-    const writeRes = await sheets.spreadsheets.values.update(paramsForWrite);
+    const writeRes = await sheets.spreadsheets.values.batchUpdate({
+      spreadsheetId: `${createRes.data.spreadsheetId}`,
+      resource: resourceForWrite,
+    });
     status.push(writeRes.status);
   } catch (error) {
+    console.log(error);
     status.push(error.response.status);
   }
 
