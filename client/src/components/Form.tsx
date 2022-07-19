@@ -21,12 +21,21 @@ const Form = () => {
     //Default sheet name is chosen in functions chain if nothing is provided. Reason: input field has to be empty initially
     sheet_name: "",
     startingDate: getWeekDay(1),
+    employee: "",
   };
+  interface argumentsType {
+    title: string;
+    defaultSSId: string;
+    defaultSId: number;
+    sheet_name: string;
+    startingDate: string;
+    employee: string;
+  }
   interface responseType {
     spreadsheetUrl: string;
     stat: number[];
   }
-  const [args, setArgs] = useState(initialArgs);
+  const [args, setArgs] = useState<argumentsType>(initialArgs);
 
   const [responseOfChain, setResponseOfChain] = useState<responseType>();
   const [errors, setErrors] = useState(false);
@@ -109,6 +118,23 @@ const Form = () => {
           />
           <FormHelperText id="name-helper">
             Name of the new spreadsheet's sheet
+          </FormHelperText>
+        </FormControl>
+        <FormControl>
+          <InputLabel htmlFor="Employee">Employee</InputLabel>
+          <Input
+            value={args.employee}
+            onChange={(e) => {
+              setArgs({
+                ...args,
+                employee: e.target.value,
+              });
+            }}
+            id="Employee"
+            aria-describedby="employee-helper"
+          />
+          <FormHelperText id="employee-helper">
+            Employee to send form
           </FormHelperText>
         </FormControl>
         <FormControl>

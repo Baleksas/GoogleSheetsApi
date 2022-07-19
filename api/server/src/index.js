@@ -74,7 +74,8 @@ function getNewToken(oAuth2Client, callback) {
     defaultSSId,
     defaultSId,
     sheet_name,
-    startingDate
+    startingDate,
+    employee
   }
  *
  */
@@ -142,6 +143,10 @@ async function functionsChain(args) {
       {
         range: `${copyRes.data.title}!H4:H4`,
         values: [valuesOfDates[4]],
+      },
+      {
+        range: `${copyRes.data.title}!C6:D6`,
+        values: [[args.employee, ""]],
       },
     ];
 
