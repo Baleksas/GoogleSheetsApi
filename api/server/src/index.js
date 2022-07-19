@@ -156,7 +156,8 @@ async function functionsChain(args) {
     const createdSheet = createRes.data.sheets[0];
 
     // Delete generetaed Sheet
-    const batchUpdateRequest = getRequests("BATCH_UPDATE", args, createdSheet);
+    const batchUpdateRequest = getRequests("BATCH_UPDATE", null, createdSheet);
+
     const deleteRes = await sheets.spreadsheets.batchUpdate({
       spreadsheetId: createRes.data.spreadsheetId,
       resource: batchUpdateRequest,
