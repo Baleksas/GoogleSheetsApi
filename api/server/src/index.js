@@ -102,12 +102,13 @@ async function functionsChain(args) {
     const requestForCopy = getRequests("COPY", args, createRes);
 
     const copyRes = await sheets.spreadsheets.sheets.copyTo(requestForCopy);
-    if (copyRes.status !== 200) return copyRes;
     status.push(copyRes.status);
 
     // Write dates
+    // String to date format
     let sdate = new Date(args.startingDate);
     let week = [];
+    // Create 2d array of week days to pass into request to write
     for (var i = 0; i < 7; i++) {
       sdate.setDate(sdate.getDate() + 1);
       week.push([formatDate(sdate.toLocaleDateString("en-US"))]);
@@ -155,15 +156,7 @@ async function functionsChain(args) {
     const createdSheet = createRes.data.sheets[0];
 
     // Delete generetaed Sheet
-    const batchUpdateRequest = {
-      requests: [
-        {
-          deleteSheet: {
-            sheetId: createdSheet.properties.sheetId,
-          },
-        },
-      ],
-    };
+    const batchUpdateRequest = getRequests("BATCH_UPDATE", args, createdSheet);
     const deleteRes = await sheets.spreadsheets.batchUpdate({
       spreadsheetId: createRes.data.spreadsheetId,
       resource: batchUpdateRequest,

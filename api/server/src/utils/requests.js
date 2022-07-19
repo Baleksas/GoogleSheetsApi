@@ -31,6 +31,16 @@ function getRequests(action, args, extra) {
           destinationSpreadsheetId: `${extra.data.spreadsheetId}`,
         },
       };
+    case "BATCH_UPDATE":
+      return {
+        requests: [
+          {
+            deleteSheet: {
+              sheetId: extra.properties.sheetId,
+            },
+          },
+        ],
+      };
   }
 }
 module.exports = { getRequests };
