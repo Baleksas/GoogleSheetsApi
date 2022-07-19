@@ -31,12 +31,26 @@ function getRequests(action, args, extra) {
           destinationSpreadsheetId: `${extra.data.spreadsheetId}`,
         },
       };
-    case "BATCH_UPDATE":
+    case "DELETE":
       return {
         requests: [
           {
             deleteSheet: {
               sheetId: extra.properties.sheetId,
+            },
+          },
+        ],
+      };
+    case "RENAME":
+      return {
+        requests: [
+          {
+            updateSheetProperties: {
+              properties: {
+                sheetId: extra.data.sheetId,
+                title: args.sheet_name ? args.sheet_name : "Default",
+              },
+              fields: "title",
             },
           },
         ],

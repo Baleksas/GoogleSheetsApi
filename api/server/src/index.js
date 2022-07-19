@@ -156,28 +156,15 @@ async function functionsChain(args) {
     const createdSheet = createRes.data.sheets[0];
 
     // Delete generetaed Sheet
-    const batchUpdateRequest = getRequests("BATCH_UPDATE", null, createdSheet);
+    const batchUpdateRequest = getRequests("DELETE", null, createdSheet);
 
     const deleteRes = await sheets.spreadsheets.batchUpdate({
       spreadsheetId: createRes.data.spreadsheetId,
       resource: batchUpdateRequest,
     });
-
     status.push(deleteRes.status);
 
-    const renameRequest = {
-      requests: [
-        {
-          updateSheetProperties: {
-            properties: {
-              sheetId: copyRes.data.sheetId,
-              title: args.sheet_name ? args.sheet_name : "Default",
-            },
-            fields: "title",
-          },
-        },
-      ],
-    };
+    const renameRequest = getRequests("RENAME", args, copyRes);
     const renameRes = await sheets.spreadsheets.batchUpdate({
       spreadsheetId: createRes.data.spreadsheetId,
       resource: renameRequest,
