@@ -9,7 +9,7 @@ const SCOPES = ["https://www.googleapis.com/auth/drive"];
 const TOKEN_PATH = "token.json";
 //Import utils
 const { getRequests } = require("./utils/requests");
-const { formatDate } = require("./utils/formatDate");
+const { getDataToWrite } = require("./utils/getDataToWrite");
 
 // Load client secrets from a local file.
 const credentials = fs.readFileSync("client-secret.json");
@@ -104,46 +104,11 @@ async function functionsChain(args) {
     const copyRes = await sheets.spreadsheets.sheets.copyTo(requestForCopy);
     status.push(copyRes.status);
 
-    // Write dates
-    // String to date format
-    let sdate = new Date(args.startingDate);
-    // Week contain first day
-    let week = [[formatDate(sdate.toLocaleDateString("en-US"))]];
-    // Create 2d array of week days to pass into request to write
-    for (var i = 1; i < 7; i++) {
-      sdate.setDate(sdate.getDate() + 1);
-      week.push([formatDate(sdate.toLocaleDateString("en-US"))]);
-    }
-    let valuesOfDates = week;
-    const writeData = [
-      {
-        range: `${copyRes.data.title}!C10:C17`,
-        values: valuesOfDates,
-      },
-      {
-        range: `${copyRes.data.title}!H3:H3`,
-        values: [valuesOfDates[0]],
-      },
-      {
-        range: `${copyRes.data.title}!H4:H4`,
-        values: [valuesOfDates[4]],
-      },
-      {
-        range: `${copyRes.data.title}!C6:D6`,
-        values: [[args.employee, ""]],
-      },
-      {
-        range: `${copyRes.data.title}!H7:H7`,
-        values: [[args.employeeEmail]],
-      },
-      {
-        range: `${copyRes.data.title}!C7:D7`,
-        values: [[args.manager, ""]],
-      },
-    ];
+    // Write
+    const dataForWriting = getDataToWrite(args, copyRes.data.title);
 
     const resourceForWrite = {
-      data: writeData,
+      data: dataForWriting,
       valueInputOption: "RAW",
     };
 
