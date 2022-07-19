@@ -6,6 +6,7 @@ export interface argumentsInterface {
   startingDate: string;
   employee: string;
   employeeEmail: string;
+  employeeNumber: string;
   manager: string;
 }
 

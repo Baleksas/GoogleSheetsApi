@@ -34,6 +34,10 @@ const getDataToWrite = (args, sheet_name) => {
       values: [[args.employee, ""]],
     },
     {
+      range: `${sheet_name}!H6:H6`,
+      values: [[args.employeeNumber]],
+    },
+    {
       range: `${sheet_name}!H7:H7`,
       values: [[args.employeeEmail]],
     },

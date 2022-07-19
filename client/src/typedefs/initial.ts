@@ -9,5 +9,6 @@ export const initialArgs = {
   startingDate: getWeekDay(1),
   employee: "",
   employeeEmail: "",
+  employeeNumber: "N/A",
   manager: "",
 };

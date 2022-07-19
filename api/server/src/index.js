@@ -144,3 +144,8 @@ async function functionsChain(args) {
 }
 
 module.exports = { oAuth2Client, functionsChain };
+
+// Read managers and employees from another sheet with hard-coded spreadhseet id and sheet id
+// In front-end inputs, make employee and manager connected in some way:
+// Make employees input select and options will be all employees from the made sheet
+// Choose employee and then manager will be automatically entered as well as email, phone number

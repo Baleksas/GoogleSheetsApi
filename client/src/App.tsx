@@ -32,12 +32,5 @@ export default App;
 // TODO: Think about deployment option
 // TODO: Test if backend works by deleting token.json and trying to generate new one. Also write some steps how to do that.
 // TODO: Implement inputs for other data such as manager, employee, etc:
-//Pay period start date:
-//Pay period end date:
 //Employee phone number:
-//Employee email address:
-//Manager:
-//Employee:
-//Town/city, County, Postcode
-// TODO: Make cell of starting date to a starting date
 // TODO: Research of the best option to send an email or form. in terms of access, might need to modify general access of a spreadsheet by setting it anyone with a link or choosing an organization (TDS) or specifying email

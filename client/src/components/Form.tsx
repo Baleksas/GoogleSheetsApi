@@ -132,6 +132,23 @@ const Form = () => {
           </FormHelperText>
         </FormControl>
         <FormControl>
+          <InputLabel htmlFor="EmployeeNumber">Employee number</InputLabel>
+          <Input
+            value={args.employeeNumber}
+            onChange={(e) => {
+              setArgs({
+                ...args,
+                employeeNumber: e.target.value,
+              });
+            }}
+            id="EmployeeNumber"
+            aria-describedby="employeenumber-helper"
+          />
+          <FormHelperText id="employeenumber-helper">
+            Employee Number
+          </FormHelperText>
+        </FormControl>
+        <FormControl>
           <InputLabel htmlFor="Manager">Manager</InputLabel>
           <Input
             value={args.manager}
