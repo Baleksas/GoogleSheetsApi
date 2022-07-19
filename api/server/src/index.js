@@ -28,8 +28,7 @@ if (!tkn) {
 oAuth2Client.setCredentials(JSON.parse(tkn));
 
 /**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
+ * Get and store new token after prompting for user authorization
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
  * @param {getEventsCallback} callback The callback for the authorized client.
  */
@@ -57,7 +56,6 @@ function getNewToken(oAuth2Client, callback) {
         if (err) return console.error(err);
         console.log("Token stored to", TOKEN_PATH);
       });
-      callback(oAuth2Client);
     });
   });
 }
@@ -68,146 +66,138 @@ function getNewToken(oAuth2Client, callback) {
 // Pick cells or form a 2d array to dynamically change values of the specific cells
 // Write into the copy spreadsheet 2d arrays with dynamically written arguments to change specific cells
 
-// QUESTIONS
-// What is sheet id? Should it start from 0 ant iterate up or be generated automatically?
-
-let defaultSSId = "1Znc2RBemy_rvsBZXv2EwDItin4e76Vp3nM3iWv_QqKw";
-let defaultSId = 1805430215;
-let defaultSheetName = "Copy of Time sheet_test";
-// functionsChain({
-//   title: "NewestSheet_1",
-//   defaultSSId,
-//   defaultSId,
-//   defaultSheetName,
-// });
-
 /**
  * Execute chain of functions to create, copy and write into a sheet to perform required task:
- * Get a copy of default Spreadsheet and insert values into it
- * @param {string} title Title to create a new spreadsheet with.
- * @param {string} defaultSSId Default Spreadsheet Id.
- * @param {number} defaultSId Default Sheet id.
+ * Get a copy of default Spreadsheet's sheet and write values into it
+ * @param {args} args - Arguments object {
+    title,
+    defaultSSId,
+    defaultSId,
+    sheet_name,
+    startingDate
+  }
  *
  */
-// inserted curly brackets before and after arguments to pass an object, haven't tested. hopefully works.
 async function functionsChain(args) {
   const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
-  // Create
 
-  const requestForCreate = {
-    resource: {
-      sheets: [
-        {
-          properties: {
-            title: args.sheet_name,
-          },
-        },
-      ],
-
-      properties: {
-        title: args.title,
-      },
-    },
-  };
+  //Initialize status array to store status codes of all responses
   let status = [];
-  // FIXME: When creating a new file, it neeeds to have a sheet. Therefore, Sheet1 is automatically generated. After copying
-  // copy sheet into it, it generates another sheet. After that, need to delete the Sheet1 sheet.
-  const createRes = await sheets.spreadsheets.create(requestForCreate);
-  if (createRes.status !== 200) return createRes;
-  const spreadsheetUrl = createRes.data.spreadsheetUrl;
-  status.push(createRes.status);
-
-  // Copy
-  const requestForCopy = {
-    spreadsheetId: args.defaultSSId,
-    sheetId: args.defaultSId,
-    resource: {
-      destinationSpreadsheetId: `${createRes.data.spreadsheetId}`,
-    },
-  };
-  const copyRes = await sheets.spreadsheets.sheets.copyTo(requestForCopy);
-  if (copyRes.status !== 200) return copyRes;
-  status.push(copyRes.status);
-
-  // Write dates
-  // TODO: Fix dates formatting to avoid redundancy
-  var { formatDate } = require("./utils/formatDate");
-  let sdate = new Date(args.startingDate);
-  let week = [];
-  for (var i = 0; i < 7; i++) {
-    sdate.setDate(sdate.getDate() + 1);
-    week.push([formatDate(sdate.toLocaleDateString("en-US"))]);
-  }
-  let valuesOfDates = week;
-  const writeData = [
-    {
-      range: `${copyRes.data.title}!C10:C17`,
-      values: valuesOfDates,
-    },
-    {
-      range: `${copyRes.data.title}!H3:H3`,
-      values: [valuesOfDates[0]],
-    },
-    {
-      range: `${copyRes.data.title}!H4:H4`,
-      values: [valuesOfDates[6]],
-    },
-  ];
-
-  const resourceForWrite = {
-    data: writeData,
-    valueInputOption: "RAW",
-  };
-
+  //Initialize spreadsheetUrl to be able to edit it in try
+  let spreadsheetUrl;
+  // Create
   try {
+    const requestForCreate = {
+      resource: {
+        sheets: [
+          {
+            properties: {
+              title: args.sheet_name,
+            },
+          },
+        ],
+
+        properties: {
+          title: args.title,
+        },
+      },
+    };
+
+    const createRes = await sheets.spreadsheets.create(requestForCreate);
+    spreadsheetUrl = createRes.data.spreadsheetUrl;
+    status.push(createRes.status);
+
+    // Copy
+    const requestForCopy = {
+      spreadsheetId: args.defaultSSId,
+      sheetId: args.defaultSId,
+      resource: {
+        destinationSpreadsheetId: `${createRes.data.spreadsheetId}`,
+      },
+    };
+
+    const copyRes = await sheets.spreadsheets.sheets.copyTo(requestForCopy);
+    if (copyRes.status !== 200) return copyRes;
+    status.push(copyRes.status);
+
+    // Write dates
+    // TODO: Fix dates formatting to avoid redundancy
+    var { formatDate } = require("./utils/formatDate");
+    let sdate = new Date(args.startingDate);
+    let week = [];
+    for (var i = 0; i < 7; i++) {
+      sdate.setDate(sdate.getDate() + 1);
+      week.push([formatDate(sdate.toLocaleDateString("en-US"))]);
+    }
+    let valuesOfDates = week;
+    const writeData = [
+      {
+        range: `${copyRes.data.title}!C10:C17`,
+        values: valuesOfDates,
+      },
+      {
+        range: `${copyRes.data.title}!H3:H3`,
+        values: [valuesOfDates[0]],
+      },
+      {
+        range: `${copyRes.data.title}!H4:H4`,
+        values: [valuesOfDates[4]],
+      },
+    ];
+
+    const resourceForWrite = {
+      data: writeData,
+      valueInputOption: "RAW",
+    };
+
     const writeRes = await sheets.spreadsheets.values.batchUpdate({
       spreadsheetId: `${createRes.data.spreadsheetId}`,
       resource: resourceForWrite,
     });
     status.push(writeRes.status);
+
+    // First created sheet is auto generated when spreadsheet was created
+    const createdSheet = createRes.data.sheets[0];
+
+    // Delete generetaed Sheet
+    const batchUpdateRequest = {
+      requests: [
+        {
+          deleteSheet: {
+            sheetId: createdSheet.properties.sheetId,
+          },
+        },
+      ],
+    };
+    const deleteRes = await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: createRes.data.spreadsheetId,
+      resource: batchUpdateRequest,
+    });
+
+    status.push(deleteRes.status);
+
+    const renameRequest = {
+      requests: [
+        {
+          updateSheetProperties: {
+            properties: {
+              sheetId: copyRes.data.sheetId,
+              title: args.sheet_name ? args.sheet_name : "Default",
+            },
+            fields: "title",
+          },
+        },
+      ],
+    };
+    const renameRes = await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: createRes.data.spreadsheetId,
+      resource: renameRequest,
+    });
+    status.push(renameRes.status);
   } catch (error) {
     console.log(error);
     status.push(error.response.status);
   }
-
-  // First created sheet is auto generated when spreadsheet was created
-  const createdSheet = createRes.data.sheets[0];
-
-  // Delete generetaed Sheet
-  const batchUpdateRequest = {
-    requests: [
-      {
-        deleteSheet: {
-          sheetId: createdSheet.properties.sheetId,
-        },
-      },
-    ],
-  };
-  const deleteRes = await sheets.spreadsheets.batchUpdate({
-    spreadsheetId: createRes.data.spreadsheetId,
-    resource: batchUpdateRequest,
-  });
-
-  status.push(deleteRes.status);
-
-  const renameRequest = {
-    requests: [
-      {
-        updateSheetProperties: {
-          properties: {
-            sheetId: copyRes.data.sheetId,
-            title: args.sheet_name ? args.sheet_name : "Default",
-          },
-          fields: "title",
-        },
-      },
-    ],
-  };
-  const renameRes = await sheets.spreadsheets.batchUpdate({
-    spreadsheetId: createRes.data.spreadsheetId,
-    resource: renameRequest,
-  });
-  status.push(renameRes.status);
   return { spreadsheetUrl, status };
 }
 
