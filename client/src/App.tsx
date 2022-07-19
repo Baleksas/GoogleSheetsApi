@@ -8,17 +8,10 @@ const App = () => {
     <div className="App">
       <Container
         sx={{
-          height: "lg",
-          maxHeight: "lg",
           backgroundColor: "#232F34",
           padding: "2em",
           borderRadius: "1em",
           boxShadow: 2,
-          display: "flex",
-          flexDirection: "column",
-          width: "max-content",
-          minWidth: "md",
-          maxWidth: "lg",
         }}
       >
         <Form />
