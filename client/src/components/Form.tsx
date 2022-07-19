@@ -97,6 +97,7 @@ const Form = () => {
             args.title ? args.title + "'s sheet" : "Sheet"
           } name`}</InputLabel>
           <Input
+            value={args.sheet_name}
             onChange={(e) =>
               setArgs({
                 ...args,
