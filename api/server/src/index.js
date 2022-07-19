@@ -1,14 +1,15 @@
 const fs = require("fs");
 const readline = require("readline");
 const { google } = require("googleapis");
-const { getWeekDay } = require("./utils/dateGetter");
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/drive"];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
 const TOKEN_PATH = "token.json";
+//Import utils
 const { getRequests } = require("./utils/requests");
+const { formatDate } = require("./utils/formatDate");
 
 // Load client secrets from a local file.
 const credentials = fs.readFileSync("client-secret.json");
@@ -87,30 +88,24 @@ async function functionsChain(args) {
   let status = [];
   //Initialize spreadsheetUrl to be able to edit it in try
   let spreadsheetUrl;
-  // Create
+
   try {
-    const requestForCreate = getRequests(args);
+    // Create
+    const requestForCreate = getRequests("CREATE", args);
 
     const createRes = await sheets.spreadsheets.create(requestForCreate);
+    // Get spreadsheeturl which will later be exported
     spreadsheetUrl = createRes.data.spreadsheetUrl;
     status.push(createRes.status);
 
     // Copy
-    const requestForCopy = {
-      spreadsheetId: args.defaultSSId,
-      sheetId: args.defaultSId,
-      resource: {
-        destinationSpreadsheetId: `${createRes.data.spreadsheetId}`,
-      },
-    };
+    const requestForCopy = getRequests("COPY", args, createRes);
 
     const copyRes = await sheets.spreadsheets.sheets.copyTo(requestForCopy);
     if (copyRes.status !== 200) return copyRes;
     status.push(copyRes.status);
 
     // Write dates
-    // TODO: Fix dates formatting to avoid redundancy
-    var { formatDate } = require("./utils/formatDate");
     let sdate = new Date(args.startingDate);
     let week = [];
     for (var i = 0; i < 7; i++) {
