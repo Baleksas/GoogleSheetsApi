@@ -7,6 +7,7 @@ const SCOPES = ["https://www.googleapis.com/auth/drive"];
 // created automatically when the authorization flow completes for the first
 // time.
 const TOKEN_PATH = "token.json";
+
 //Import utils
 const { getRequests } = require("./utils/requests");
 const { getDataToWrite } = require("./utils/getDataToWrite");
@@ -14,7 +15,8 @@ const { getDataToWrite } = require("./utils/getDataToWrite");
 // Load client secrets from a local file.
 const credentials = fs.readFileSync("client-secret.json");
 if (!credentials) console.log("Error loading client secret file");
-// Authorize a client with credentials, then call the Google Sheets API.\
+// Authorize a client with credentials, then call the Google Sheets API.
+
 const { client_secret, client_id, redirect_uris } =
   JSON.parse(credentials).installed;
 const oAuth2Client = new google.auth.OAuth2(
@@ -22,19 +24,20 @@ const oAuth2Client = new google.auth.OAuth2(
   client_secret,
   redirect_uris[0]
 );
-const tkn = fs.readFileSync(TOKEN_PATH);
 // Check if we have previously stored a token.
-if (!tkn) {
-  getNewToken(oAuth2Client, createSheet);
+let tkn;
+try {
+  tkn = fs.readFileSync(TOKEN_PATH);
+} catch (error) {
+  console.log("ERR HERE" + error);
+  return getNewToken(oAuth2Client);
 }
 oAuth2Client.setCredentials(JSON.parse(tkn));
-
 /**
  * Get and store new token after prompting for user authorization
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {getEventsCallback} callback The callback for the authorized client.
  */
-function getNewToken(oAuth2Client, callback) {
+function getNewToken(oAuth2Client) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES,
@@ -47,11 +50,13 @@ function getNewToken(oAuth2Client, callback) {
   rl.question("Enter the code from that page here: ", (code) => {
     rl.close();
     oAuth2Client.getToken(code, (err, token) => {
-      if (err)
+      if (err) {
+        console.log("given code: ", code);
         return console.error(
           "Error while trying to retrieve access token",
           err
         );
+      }
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
       fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
@@ -137,6 +142,8 @@ async function functionsChain(args) {
     });
     status.push(renameRes.status);
   } catch (error) {
+    //Dispplays status, which were successfull until error was encountered
+    console.log(status);
     console.log(error);
   }
   return { spreadsheetUrl, status };

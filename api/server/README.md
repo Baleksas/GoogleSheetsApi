@@ -22,7 +22,7 @@ In the bottom line of the console, there should be a line:
 `Enter the code from that page here: `
 
 You can get this code after logging in with the given URL and copying the code from the search bar. It should look something like this:
-4%2F0AdQt8qhWtRUA5QKCSdnBkBaoIpzUoSSocxSYDVbw0BPr-e9V1r_oHGfAP9ENwtMT5rpuWw.
+4%2F0AdQt8qhWtRUA5QKCSdnBkBaoIpzUoSSocxSYDVbw0BPr-e9V1r_oHGfAP9ENwtMT5rpuWw
 You should cut it from the URL in a search bar:
 
 `http://localhost:8000/?code=4%2F0AdQt8qhWtRUA5QKCSdnBkBaoIpzUoSSocxSYDVbw0BPr-e9V1r_oHGfAP9ENwtMT5rpuWw&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive`
@@ -37,4 +37,6 @@ In order to call the functions chain which includes functions:
 
 3. Write custom values into specific ranges of the sheet.
 
-TODO: need to consider which cells need to be changed automatically (such as dates), manually (names?), and which cells need to remain the same in all the sheets.
+To generate token.json, go to server/src path and run `node index.js`
+
+Once token.json is generated, store it in safe place. If you lose it: https://groups.google.com/g/adwords-api/c/Ra6ZUUw-E_Y?pli=1
