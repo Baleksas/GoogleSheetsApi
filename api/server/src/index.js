@@ -107,9 +107,10 @@ async function functionsChain(args) {
     // Write dates
     // String to date format
     let sdate = new Date(args.startingDate);
-    let week = [];
+    // Week contain first day
+    let week = [[formatDate(sdate.toLocaleDateString("en-US"))]];
     // Create 2d array of week days to pass into request to write
-    for (var i = 0; i < 7; i++) {
+    for (var i = 1; i < 7; i++) {
       sdate.setDate(sdate.getDate() + 1);
       week.push([formatDate(sdate.toLocaleDateString("en-US"))]);
     }
