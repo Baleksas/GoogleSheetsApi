@@ -138,7 +138,6 @@ async function functionsChain(args) {
     status.push(renameRes.status);
   } catch (error) {
     console.log(error);
-    status.push(error.response.status);
   }
   return { spreadsheetUrl, status };
 }
