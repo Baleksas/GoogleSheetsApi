@@ -8,6 +8,7 @@ const SCOPES = ["https://www.googleapis.com/auth/drive"];
 // created automatically when the authorization flow completes for the first
 // time.
 const TOKEN_PATH = "token.json";
+const { getRequests } = require("./utils/requests");
 
 // Load client secrets from a local file.
 const credentials = fs.readFileSync("client-secret.json");
@@ -88,21 +89,7 @@ async function functionsChain(args) {
   let spreadsheetUrl;
   // Create
   try {
-    const requestForCreate = {
-      resource: {
-        sheets: [
-          {
-            properties: {
-              title: args.sheet_name,
-            },
-          },
-        ],
-
-        properties: {
-          title: args.title,
-        },
-      },
-    };
+    const requestForCreate = getRequests(args);
 
     const createRes = await sheets.spreadsheets.create(requestForCreate);
     spreadsheetUrl = createRes.data.spreadsheetUrl;
@@ -147,6 +134,14 @@ async function functionsChain(args) {
       {
         range: `${copyRes.data.title}!C6:D6`,
         values: [[args.employee, ""]],
+      },
+      {
+        range: `${copyRes.data.title}!H7:H7`,
+        values: [[args.employeeEmail]],
+      },
+      {
+        range: `${copyRes.data.title}!C7:D7`,
+        values: [[args.manager, ""]],
       },
     ];
 
