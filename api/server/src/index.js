@@ -127,14 +127,7 @@ const getEmployees = async () => {
 /**
  * Execute chain of functions to create, copy and write into a sheet to perform required task:
  * Get a copy of default Spreadsheet's sheet and write values into it
- * @param {args} args - Arguments object {
-    title,
-    defaultSSId,
-    defaultSId,
-    sheet_name,
-    startingDate,
-    employee
-  }
+ * @param {args} args - Arguments object
  *
  */
 async function functionsChain(args) {
@@ -199,6 +192,24 @@ async function functionsChain(args) {
   }
   return { spreadsheetUrl, status };
 }
+
+// Create sheets for all function
+// Should use for loop
+// Get employees objects array
+// Loop in for and make functionschain function by passing arguments to it
+// Arguments should be in a form
+// title: "",   //passed title + employee name + date
+//   sheet_name: "",  // Default or dynamic as title
+//   startingDate: getWeekDay(1),  // Default or dynamic (most likely default)
+//   employee: "", // Looping, smth like employee[1].fullName
+//   employeeEmail: "", // Looping, smth like employee[1].email
+//   employeeNumber: "N/A", // probably default n/a
+//   manager: "", // Looping, smth like employee[1].manager
+
+// Each functionschain will return status and urls. Might be unneccesary.
+// QUESTION: Is UI necessary if it's going to be fully automatic?
+// If its not fully automatic, would functionallity to send for all only would be enough
+// in other words, do we need functionallity to send sheets for a single person?
 
 module.exports = { oAuth2Client, functionsChain, getEmployees };
 
