@@ -67,6 +67,40 @@ function getNewToken(oAuth2Client) {
   });
 }
 
+// Function to get managers and employee details from sheet
+// Spreadsheet id: 1KGlrEd6m1H23V32Au2Mg0o1HBfe_5yTvwqv80k6-YbY
+// Sheet id: 928194401
+const employees_sheet_name = "User_Download_18072022_161534";
+const getEmployees = async () => {
+  const sheets = google.sheets({ version: "v4", auth: oAuth2Client });
+  try {
+    const employeesRes = await sheets.spreadsheets.values.get({
+      spreadsheetId: "1KGlrEd6m1H23V32Au2Mg0o1HBfe_5yTvwqv80k6-YbY",
+      range: `${employees_sheet_name}!A1:D5`,
+    });
+    // console.log(employeesRes.data.values[1]); // First row - descriptions
+    // console.log(employeesRes.data.values[2][0]); // Name
+    // console.log(employeesRes.data.values[2][1]); // Surname
+    // console.log(employeesRes.data.values[2][2]); // Email
+    // console.log(employeesRes.data.values[2][3]); // Manager full name
+
+    // Make array of employees full names
+    let employees_names_list = [];
+    for (var i = 1; i < employeesRes.data.values.length; i++) {
+      let fullName =
+        employeesRes.data.values[i][0] +
+        " ".concat(employeesRes.data.values[i][1]);
+      employees_names_list.push(fullName);
+    }
+    console.log(employees_names_list);
+  } catch (error) {
+    console.log(error);
+  }
+};
+getEmployees();
+
+// Searching algorithm to find managers for employees
+
 // Create sheet
 // Get sheet id and spreadsheet id
 // Copy from the original copy of the timesheet to a created sheet by providing sheet id and spreadsheetid (give it the dynamic title as well)
