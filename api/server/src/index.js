@@ -88,22 +88,29 @@ const getEmployees = async () => {
     let employees_full_names = [];
     let employees_emails = [];
     let employees_managers = [];
-
+    let employees = [];
     for (var i = 1; i < employeesRes.data.values.length; i++) {
       let fullName =
         employeesRes.data.values[i][0] +
         " ".concat(employeesRes.data.values[i][1]);
-      employees_full_names.push(fullName);
-      employees_id.push(i);
-      employees_emails.push(employeesRes.data.values[i][2]);
-      employees_managers.push(employeesRes.data.values[i][3]);
+      employees.push({
+        id: i,
+        fullName: fullName,
+        email: employeesRes.data.values[i][2],
+        manager: employeesRes.data.values[i][3],
+      });
+      // employees_full_names.push(fullName);
+      // employees_id.push(i);
+      // employees_emails.push(employeesRes.data.values[i][2]);
+      // employees_managers.push(employeesRes.data.values[i][3]);
     }
-    return {
-      employees_id,
-      employees_full_names,
-      employees_emails,
-      employees_managers,
-    };
+    return employees;
+    // return {
+    //   employees_id,
+    //   employees_full_names,
+    //   employees_emails,
+    //   employees_managers,
+    // };
   } catch (error) {
     console.log(error);
   }

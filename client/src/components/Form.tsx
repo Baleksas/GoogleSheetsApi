@@ -16,7 +16,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 import {
   argumentsInterface,
-  employeesDataInterface,
+  EmployeeType,
   responseInterface,
 } from "../typedefs/interfaces";
 import { initialArgs } from "../typedefs/initial";
@@ -27,13 +27,28 @@ const Form = () => {
 
   const [responseOfChain, setResponseOfChain] = useState<responseInterface>();
   const [errors, setErrors] = useState(false);
-  const [employeesData, setEmployeesData] = useState<employeesDataInterface>();
+  const [employeesData, setEmployeesData] = useState<EmployeeType[]>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const classes = useStyles();
 
   useEffect(() => {
     getEmployeesData();
   }, []);
+  useEffect(() => {
+    console.log(args.employee);
+  }, [args]);
+  const assignEmployeeData = (e: any) => {
+    setArgs({
+      ...args,
+      employee: e.target.value.fullName,
+      employeeEmail: e.target.value.email,
+      manager: e.target.value.manager,
+    });
+  };
+  useEffect(() => {
+    console.log(args);
+    console.log(args.employee);
+  }, [args]);
 
   const getEmployeesData = async () => {
     setErrors(false);
@@ -90,7 +105,7 @@ const Form = () => {
         }}
       >
         <Grid item xs={4} sm={6} md={3} lg={3}>
-          <FormControl>
+          <FormControl sx={{ width: "100%" }}>
             <InputLabel htmlFor="Title">Title</InputLabel>
             <Input
               value={args.title}
@@ -109,7 +124,7 @@ const Form = () => {
           </FormControl>
         </Grid>
         <Grid item xs={4} sm={6} md={3} lg={3}>
-          <FormControl>
+          <FormControl sx={{ width: "100%" }}>
             <InputLabel htmlFor="Name">{`${
               args.title ? args.title + "'s sheet" : "Sheet"
             } name`}</InputLabel>
@@ -130,27 +145,27 @@ const Form = () => {
           </FormControl>
         </Grid>
         <Grid item xs={4} sm={6} md={3} lg={3}>
-          <FormControl>
-            <InputLabel id="employee-select-label" htmlFor="Employee">
-              Employee
-            </InputLabel>
+          <FormControl sx={{ width: "100%" }}>
+            <InputLabel id="employee-select-label">Employee</InputLabel>
             <Select
               labelId="employee-select-label"
               id="employee-select"
-              label="Employee name"
-              value={args.employee}
-              onChange={(e) => {
+              value={args.employeeEmail}
+              onChange={(e: any) => {
                 setArgs({
                   ...args,
-                  employee: e.target.value as string,
+                  employee: e.target.value.fullName,
+                  employeeEmail: e.target.value.email,
+                  manager: e.target.value.manager,
                 });
               }}
+              label="Employee"
             >
               <MenuItem value="">None</MenuItem>
-              {employeesData?.employees_full_names?.map((full_name) => {
+              {employeesData?.map((employee: any) => {
                 return (
-                  <MenuItem key={full_name} value={full_name}>
-                    {full_name}
+                  <MenuItem key={employee.id} value={employee}>
+                    {employee.fullName}
                   </MenuItem>
                 );
               })}
@@ -164,7 +179,7 @@ const Form = () => {
           </FormControl>
         </Grid>
         <Grid item xs={4} sm={6} md={3} lg={3}>
-          <FormControl>
+          <FormControl sx={{ width: "100%" }}>
             <InputLabel htmlFor="EmployeeEmail">Employee email</InputLabel>
             <Input
               value={args.employeeEmail}
@@ -183,7 +198,7 @@ const Form = () => {
           </FormControl>
         </Grid>
         <Grid item xs={4} sm={6} md={3} lg={3}>
-          <FormControl>
+          <FormControl sx={{ width: "100%" }}>
             <InputLabel htmlFor="EmployeeNumber">Employee number</InputLabel>
             <Input
               value={args.employeeNumber}
@@ -202,7 +217,7 @@ const Form = () => {
           </FormControl>
         </Grid>
         <Grid item xs={4} sm={6} md={3} lg={3}>
-          <FormControl>
+          <FormControl sx={{ width: "100%" }}>
             <InputLabel htmlFor="Manager">Manager</InputLabel>
             <Input
               value={args.manager}
@@ -219,7 +234,7 @@ const Form = () => {
           </FormControl>
         </Grid>
         <Grid item xs={4} sm={6} md={3} lg={3}>
-          <FormControl>
+          <FormControl sx={{ width: "100%" }}>
             <InputLabel htmlFor="Date">Starting date</InputLabel>
             <Input
               sx={{

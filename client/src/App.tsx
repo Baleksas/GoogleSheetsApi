@@ -2,19 +2,32 @@ import React from "react";
 
 import { Container } from "@mui/system";
 import Form from "./components/Form";
+import Confirmation from "./components/Confirmation";
 
 const App = () => {
   return (
     <div className="App">
       <Container
         sx={{
-          backgroundColor: "#232F34",
-          padding: "2em",
-          borderRadius: "1em",
-          boxShadow: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-around",
+          minHeight: "100vh",
+          height: "max-content",
         }}
       >
-        <Form />
+        <Container
+          sx={{
+            backgroundColor: "#232F34",
+            padding: "2em",
+            borderRadius: "1em",
+            boxShadow: 2,
+          }}
+        >
+          <Form />
+        </Container>
+        <Confirmation />
       </Container>
     </div>
   );
