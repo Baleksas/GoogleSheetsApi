@@ -13,7 +13,7 @@ export default makeStyles({
       color: "rgba(255,255,255,0.8)",
     },
     "& .MuiInputLabel-root.Mui-focused": {
-      color: "rgba(255,255,255,0.8)",
+      // color: "rgba(255,255,255,0.8)",
     },
     "& .MuiInput-root": {
       //input field to white (what user writes)
@@ -34,8 +34,9 @@ export default makeStyles({
     },
 
     "& .MuiInput-underline": {
-      borderBottom: "1px solid rgba(100,100,100,0.8)",
+      borderBottom: "1px solid white",
     },
+
     "& .MuiFormHelperText-root": {
       color: "rgba(255,255,255,0.8)",
     },
@@ -54,7 +55,7 @@ export default makeStyles({
       color: "white",
     },
     "& .MuiInput-underline:after": {
-      borderBottomColor: "yellow",
+      borderBottomColor: "rgb(40,190,230)",
     },
     "& .MuiOutlinedInput-root": {
       "& fieldset": {
@@ -63,9 +64,15 @@ export default makeStyles({
       "&:hover fieldset": {
         borderColor: "white",
       },
-      "&.Mui-focused fieldset": {
-        borderColor: "rgb(40, 190,230)",
+      "& .Mui-focused fieldset": {
+        borderColor: "rgb(40,190,230)",
       },
+    },
+    "& .MuiSvgIcon-root": {
+      color: "white",
+    },
+    "& .MuiSelect-icon": {
+      color: "white",
     },
   },
 });

@@ -154,18 +154,12 @@ const Form = () => {
                   </MenuItem>
                 );
               })}
+              {/* TODO: Implement selecting all feature */}
+              <MenuItem sx={{ backgroundColor: "rgba(40,190,230,0.2)" }}>
+                Select all
+              </MenuItem>
             </Select>
-            {/* <Input
-              value={args.employee}
-              onChange={(e) => {
-                setArgs({
-                  ...args,
-                  employee: e.target.value,
-                });
-              }}
-              id="Employee"
-              aria-describedby="employee-helper"
-            /> */}
+
             <FormHelperText id="employee-helper">Employee name</FormHelperText>
           </FormControl>
         </Grid>
@@ -228,6 +222,9 @@ const Form = () => {
           <FormControl>
             <InputLabel htmlFor="Date">Starting date</InputLabel>
             <Input
+              sx={{
+                svg: "white",
+              }}
               value={args.startingDate}
               type="date"
               onChange={(e) => {
