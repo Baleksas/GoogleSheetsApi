@@ -12,15 +12,22 @@ import {
 import { CircularProgress } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import useStyles from "../style/materialOverwrite";
-import { argumentsInterface, responseInterface } from "../typedefs/interfaces";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+
+import {
+  argumentsInterface,
+  employeesDataInterface,
+  responseInterface,
+} from "../typedefs/interfaces";
 import { initialArgs } from "../typedefs/initial";
+import MenuItem from "@mui/material/MenuItem";
 
 const Form = () => {
   const [args, setArgs] = useState<argumentsInterface>(initialArgs);
 
   const [responseOfChain, setResponseOfChain] = useState<responseInterface>();
   const [errors, setErrors] = useState(false);
-  const [employeesData, setEmployeesData] = useState();
+  const [employeesData, setEmployeesData] = useState<employeesDataInterface>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const classes = useStyles();
 
@@ -29,26 +36,22 @@ const Form = () => {
   }, []);
 
   const getEmployeesData = async () => {
+    setErrors(false);
     try {
-      setErrors(false);
-      try {
-        await fetch("http://localhost:9000/getemployees", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            setEmployeesData(res);
-            console.log(res);
-          });
-      } catch (error) {
-        setErrors(true);
-      }
-    } catch (error) {}
+      await fetch("http://localhost:9000/getemployees", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          setEmployeesData(res.employeesRes);
+        });
+    } catch (error) {
+      setErrors(true);
+    }
   };
-  console.log(employeesData);
   const callApi = async () => {
     setErrors(false);
     setIsLoading(true);
@@ -128,8 +131,31 @@ const Form = () => {
         </Grid>
         <Grid item xs={4} sm={6} md={3} lg={3}>
           <FormControl>
-            <InputLabel htmlFor="Employee">Employee</InputLabel>
-            <Input
+            <InputLabel id="employee-select-label" htmlFor="Employee">
+              Employee
+            </InputLabel>
+            <Select
+              labelId="employee-select-label"
+              id="employee-select"
+              label="Employee name"
+              value={args.employee}
+              onChange={(e) => {
+                setArgs({
+                  ...args,
+                  employee: e.target.value as string,
+                });
+              }}
+            >
+              <MenuItem value="">None</MenuItem>
+              {employeesData?.employees_full_names?.map((full_name) => {
+                return (
+                  <MenuItem key={full_name} value={full_name}>
+                    {full_name}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+            {/* <Input
               value={args.employee}
               onChange={(e) => {
                 setArgs({
@@ -139,7 +165,7 @@ const Form = () => {
               }}
               id="Employee"
               aria-describedby="employee-helper"
-            />
+            /> */}
             <FormHelperText id="employee-helper">Employee name</FormHelperText>
           </FormControl>
         </Grid>

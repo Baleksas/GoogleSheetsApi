@@ -14,3 +14,9 @@ export interface responseInterface {
   spreadsheetUrl: string;
   stat: number[];
 }
+export interface employeesDataInterface {
+  employees_id: number[];
+  employees_full_names: string[];
+  employees_emails: string[];
+  employees_managers: string[];
+}

@@ -39,5 +39,33 @@ export default makeStyles({
     "& .MuiFormHelperText-root": {
       color: "rgba(255,255,255,0.8)",
     },
+    "& .MuiSelect-select": {
+      color: "rgba(255,255,255,0.8)",
+    },
+    "& .MuiSelect-nativeInput": {
+      borderColor: "rgba(255,255,255,0.8)",
+      color: "rgba(255,255,255,0.8)",
+    },
+    "& .MuiSelect-outlined": {
+      borderColor: "rgba(255,255,255,0.8)",
+      color: "rgba(255,255,255,0.8)",
+    },
+    "& label.Mui-focused": {
+      color: "white",
+    },
+    "& .MuiInput-underline:after": {
+      borderBottomColor: "yellow",
+    },
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "white",
+      },
+      "&:hover fieldset": {
+        borderColor: "white",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "rgb(40, 190,230)",
+      },
+    },
   },
 });
