@@ -10,7 +10,7 @@ import {
   Grid,
 } from "@mui/material";
 import { CircularProgress } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useStyles from "../style/materialOverwrite";
 import { argumentsInterface, responseInterface } from "../typedefs/interfaces";
 import { initialArgs } from "../typedefs/initial";
@@ -20,10 +20,35 @@ const Form = () => {
 
   const [responseOfChain, setResponseOfChain] = useState<responseInterface>();
   const [errors, setErrors] = useState(false);
-
+  const [employeesData, setEmployeesData] = useState();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const classes = useStyles();
 
+  useEffect(() => {
+    getEmployeesData();
+  }, []);
+
+  const getEmployeesData = async () => {
+    try {
+      setErrors(false);
+      try {
+        await fetch("http://localhost:9000/getemployees", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            setEmployeesData(res);
+            console.log(res);
+          });
+      } catch (error) {
+        setErrors(true);
+      }
+    } catch (error) {}
+  };
+  console.log(employeesData);
   const callApi = async () => {
     setErrors(false);
     setIsLoading(true);

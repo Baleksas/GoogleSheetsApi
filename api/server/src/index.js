@@ -84,20 +84,30 @@ const getEmployees = async () => {
     // console.log(employeesRes.data.values[2][2]); // Email
     // console.log(employeesRes.data.values[2][3]); // Manager full name
 
-    // Make array of employees full names
-    let employees_names_list = [];
+    let employees_id = [];
+    let employees_full_names = [];
+    let employees_emails = [];
+    let employees_managers = [];
+
     for (var i = 1; i < employeesRes.data.values.length; i++) {
       let fullName =
         employeesRes.data.values[i][0] +
         " ".concat(employeesRes.data.values[i][1]);
-      employees_names_list.push(fullName);
+      employees_full_names.push(fullName);
+      employees_id.push(i);
+      employees_emails.push(employeesRes.data.values[i][2]);
+      employees_managers.push(employeesRes.data.values[i][3]);
     }
-    console.log(employees_names_list);
+    return {
+      employees_id,
+      employees_full_names,
+      employees_emails,
+      employees_managers,
+    };
   } catch (error) {
     console.log(error);
   }
 };
-getEmployees();
 
 // Searching algorithm to find managers for employees
 
@@ -183,7 +193,7 @@ async function functionsChain(args) {
   return { spreadsheetUrl, status };
 }
 
-module.exports = { oAuth2Client, functionsChain };
+module.exports = { oAuth2Client, functionsChain, getEmployees };
 
 // Read managers and employees from another sheet with hard-coded spreadhseet id and sheet id
 // In front-end inputs, make employee and manager connected in some way:
