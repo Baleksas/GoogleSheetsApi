@@ -11,4 +11,5 @@ export const initialArgs = {
   employeeEmail: "",
   employeeNumber: "N/A",
   manager: "",
+  selectAll: true,
 };

@@ -76,7 +76,7 @@ const getEmployees = async () => {
   try {
     const employeesRes = await sheets.spreadsheets.values.get({
       spreadsheetId: "1KGlrEd6m1H23V32Au2Mg0o1HBfe_5yTvwqv80k6-YbY",
-      range: `${employees_sheet_name}!A1:D5`,
+      range: `${employees_sheet_name}!A1:D6`,
     });
     // console.log(employeesRes.data.values[1]); // First row - descriptions
     // console.log(employeesRes.data.values[2][0]); // Name

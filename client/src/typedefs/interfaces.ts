@@ -8,6 +8,7 @@ export interface argumentsInterface {
   employeeEmail: string;
   employeeNumber: string;
   manager: string;
+  selectAll: boolean;
 }
 
 export interface responseInterface {
