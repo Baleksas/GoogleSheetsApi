@@ -174,6 +174,7 @@ async function functionsChain(args) {
 }
 
 const createForAll = async (args) => {
+  let status = [];
   const employees = await getEmployees();
 
   // console.log("args in back-end:", args.body);
@@ -192,8 +193,10 @@ const createForAll = async (args) => {
       employeeEmail: employees[i].email,
       manager: employees[i].manager,
     };
+    status.push(await functionsChain(editedArgs));
     console.log(`Edited args[${i}] `, editedArgs);
   }
+  console.log(status);
   return "NOTHING";
 };
 // Create sheets for all function
