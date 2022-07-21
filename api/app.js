@@ -10,6 +10,7 @@ var createRouter = require("./routes/create");
 var employeesRouter = require("./routes/employees");
 
 var cors = require("cors");
+const { createForAll } = require("./server/src");
 var app = express();
 app.use(cors());
 // view engine setup
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/create", createRouter);
+app.use("/createforall", createForAll);
 app.use("/getemployees", employeesRouter);
 
 // catch 404 and forward to error handler

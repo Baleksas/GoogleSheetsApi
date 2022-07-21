@@ -58,11 +58,27 @@ const Form = () => {
   };
   const createForEveryone = async () => {
     console.log("args: ", args);
-    if (employeesData)
-      for (var i = 0; i < employeesData.length; i++) {
-        // create dynamic args
-        console.log(employeesData[i]);
-      }
+    try {
+      await fetch("http://localhost:9000/createforall", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(args),
+      })
+        .then((res) => res.json())
+        .then(
+          (res) => {
+            console.log(res);
+          }
+          // setResponseOfChain(res);
+        );
+      setArgs(initialArgs);
+      setIsLoading(false);
+    } catch (error) {
+      setErrors(true);
+      setIsLoading(false);
+    }
   };
   const callApi = async (args: any) => {
     console.log("passed args: ", args);

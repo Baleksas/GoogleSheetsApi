@@ -78,16 +78,6 @@ const getEmployees = async () => {
       spreadsheetId: "1KGlrEd6m1H23V32Au2Mg0o1HBfe_5yTvwqv80k6-YbY",
       range: `${employees_sheet_name}!A1:D6`,
     });
-    // console.log(employeesRes.data.values[1]); // First row - descriptions
-    // console.log(employeesRes.data.values[2][0]); // Name
-    // console.log(employeesRes.data.values[2][1]); // Surname
-    // console.log(employeesRes.data.values[2][2]); // Email
-    // console.log(employeesRes.data.values[2][3]); // Manager full name
-
-    let employees_id = [];
-    let employees_full_names = [];
-    let employees_emails = [];
-    let employees_managers = [];
     let employees = [];
     for (var i = 1; i < employeesRes.data.values.length; i++) {
       let fullName =
@@ -99,18 +89,8 @@ const getEmployees = async () => {
         email: employeesRes.data.values[i][2],
         manager: employeesRes.data.values[i][3],
       });
-      // employees_full_names.push(fullName);
-      // employees_id.push(i);
-      // employees_emails.push(employeesRes.data.values[i][2]);
-      // employees_managers.push(employeesRes.data.values[i][3]);
     }
     return employees;
-    // return {
-    //   employees_id,
-    //   employees_full_names,
-    //   employees_emails,
-    //   employees_managers,
-    // };
   } catch (error) {
     console.log(error);
   }
@@ -193,6 +173,13 @@ async function functionsChain(args) {
   return { spreadsheetUrl, status };
 }
 
+const createForAll = async () => {
+  const employees = await getEmployees();
+  console.log(employees);
+  for (var i = 0; i < employees.length; i++) {
+    console.log(employees[i]);
+  }
+};
 // Create sheets for all function
 // Should use for loop
 // Get employees objects array
@@ -211,7 +198,7 @@ async function functionsChain(args) {
 // If its not fully automatic, would functionallity to send for all only would be enough
 // in other words, do we need functionallity to send sheets for a single person?
 
-module.exports = { oAuth2Client, functionsChain, getEmployees };
+module.exports = { oAuth2Client, functionsChain, getEmployees, createForAll };
 
 // Read managers and employees from another sheet with hard-coded spreadhseet id and sheet id
 // In front-end inputs, make employee and manager connected in some way:
