@@ -57,7 +57,6 @@ const Form = () => {
     }
   };
   const createForEveryone = async () => {
-    console.log("args: ", args);
     try {
       await fetch("http://localhost:9000/createforall", {
         method: "POST",

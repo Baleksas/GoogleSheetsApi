@@ -173,12 +173,28 @@ async function functionsChain(args) {
   return { spreadsheetUrl, status };
 }
 
-const createForAll = async () => {
+const createForAll = async (args) => {
   const employees = await getEmployees();
-  console.log(employees);
+
+  // console.log("args in back-end:", args.body);
+  let passedArgs = args.body;
   for (var i = 0; i < employees.length; i++) {
-    console.log(employees[i]);
+    let editedArgs = {
+      ...passedArgs,
+      title:
+        passedArgs.title +
+        "_" +
+        employees[i].fullName +
+        "_" +
+        passedArgs.startingDate,
+      sheet_name: passedArgs.sheet_name + "_" + employees[i].fullName,
+      employee: employees[i].fullName,
+      employeeEmail: employees[i].email,
+      manager: employees[i].manager,
+    };
+    console.log(`Edited args[${i}] `, editedArgs);
   }
+  return "NOTHING";
 };
 // Create sheets for all function
 // Should use for loop

@@ -4,7 +4,6 @@ var { getEmployees } = require("../server/src/index");
 
 router.get("/", async (req, res, next) => {
   let employeesRes = await getEmployees();
-  console.log("res:", employeesRes);
   res.json({ employeesRes });
 });
 
