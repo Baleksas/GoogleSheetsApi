@@ -57,6 +57,8 @@ const Form = () => {
     }
   };
   const createForEveryone = async () => {
+    // setIsLoading(true);
+
     try {
       await fetch("http://localhost:9000/createforall", {
         method: "POST",
@@ -203,6 +205,29 @@ const Form = () => {
           <FormHelperText id="employee-helper">Employee name</FormHelperText>
         </FormControl>
       </Grid>
+      <Grid item xs={4} sm={6} md={3} lg={3}>
+        <FormControl sx={{ width: "100%" }}>
+          <InputLabel htmlFor="Date">Starting date</InputLabel>
+          <Input
+            sx={{
+              svg: "white",
+            }}
+            value={args.startingDate}
+            type="date"
+            onChange={(e) => {
+              setArgs({
+                ...args,
+                startingDate: e.target.value,
+              });
+            }}
+            id="Date"
+            aria-describedby="date-helper"
+          />
+          <FormHelperText id="date-helper">
+            Default date is the nearest Monday
+          </FormHelperText>
+        </FormControl>
+      </Grid>
       {!args.selectAll && (
         <React.Fragment>
           <Grid item xs={4} sm={6} md={3} lg={3}>
@@ -258,29 +283,6 @@ const Form = () => {
                 aria-describedby="manager-helper"
               />
               <FormHelperText id="manager-helper">Manager name</FormHelperText>
-            </FormControl>
-          </Grid>
-          <Grid item xs={4} sm={6} md={3} lg={3}>
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel htmlFor="Date">Starting date</InputLabel>
-              <Input
-                sx={{
-                  svg: "white",
-                }}
-                value={args.startingDate}
-                type="date"
-                onChange={(e) => {
-                  setArgs({
-                    ...args,
-                    startingDate: e.target.value,
-                  });
-                }}
-                id="Date"
-                aria-describedby="date-helper"
-              />
-              <FormHelperText id="date-helper">
-                Default date is the nearest Monday
-              </FormHelperText>
             </FormControl>
           </Grid>
         </React.Fragment>

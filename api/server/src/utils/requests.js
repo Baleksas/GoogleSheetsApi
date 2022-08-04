@@ -55,6 +55,15 @@ function getRequests(action, args, extra) {
           },
         ],
       };
+    case "GRANT_ACCESS":
+      return {
+        fileId: extra.data.spreadsheetId,
+        resource: {
+          role: "writer",
+          type: "user",
+          emailAddress: args.employeeEmail,
+        },
+      };
   }
 }
 module.exports = { getRequests };

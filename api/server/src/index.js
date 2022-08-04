@@ -165,6 +165,14 @@ async function functionsChain(args) {
       resource: renameRequest,
     });
     status.push(renameRes.status);
+
+    var drive = google.drive({ version: "v3", auth: oAuth2Client });
+
+    console.log("spreadsheet id:", createRes.data.spreadsheetId);
+    console.log("employee email: ", args.employeeEmail);
+    const accessRequest = getRequests("GRANT_ACCESS", args, createRes);
+    const accessRes = await drive.permissions.create(accessRequest);
+    console.log(`Access status: `, accessRes);
   } catch (error) {
     //Dispplays status, which were successfull until error was encountered
     console.log(status);
@@ -194,9 +202,8 @@ const createForAll = async (args) => {
       manager: employees[i].manager,
     };
     status.push(await functionsChain(editedArgs));
-    console.log(`Edited args[${i}] `, editedArgs);
   }
-  console.log(status);
+  // console.log(status);
   return "NOTHING";
 };
 // Create sheets for all function
