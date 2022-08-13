@@ -172,7 +172,7 @@ async function functionsChain(args) {
     console.log("employee email: ", args.employeeEmail);
     const accessRequest = getRequests("GRANT_ACCESS", args, createRes);
     const accessRes = await drive.permissions.create(accessRequest);
-    console.log(`Access status: `, accessRes);
+    status.push(accessRes.status);
   } catch (error) {
     //Dispplays status, which were successfull until error was encountered
     console.log(status);
@@ -203,7 +203,6 @@ const createForAll = async (args) => {
     };
     status.push(await functionsChain(editedArgs));
   }
-  // console.log(status);
   return "NOTHING";
 };
 // Create sheets for all function
